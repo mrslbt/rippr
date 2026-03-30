@@ -33,7 +33,6 @@ rippr extracts transcripts from any YouTube video and saves them as clean, struc
 - Auto-generated caption indicator
 - Timestamp toggle
 - Multiple fallback strategies for reliable extraction
-- Retro pixel art UI with the rippr mascot
 
 ## Install
 
