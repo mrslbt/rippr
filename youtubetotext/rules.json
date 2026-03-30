@@ -1,0 +1,70 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "User-Agent",
+          "operation": "set",
+          "value": "com.google.android.youtube/20.10.38 (Linux; U; Android 14)"
+        },
+        {
+          "header": "Sec-Fetch-Site",
+          "operation": "remove"
+        },
+        {
+          "header": "Sec-Fetch-Mode",
+          "operation": "remove"
+        },
+        {
+          "header": "Sec-Fetch-Dest",
+          "operation": "remove"
+        },
+        {
+          "header": "Origin",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "youtubei/v1/player",
+      "resourceTypes": ["xmlhttprequest", "other"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "User-Agent",
+          "operation": "set",
+          "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36,gzip(gfe)"
+        },
+        {
+          "header": "Sec-Fetch-Site",
+          "operation": "remove"
+        },
+        {
+          "header": "Sec-Fetch-Mode",
+          "operation": "remove"
+        },
+        {
+          "header": "Sec-Fetch-Dest",
+          "operation": "remove"
+        },
+        {
+          "header": "Origin",
+          "operation": "remove"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "timedtext",
+      "resourceTypes": ["xmlhttprequest", "other"]
+    }
+  }
+]

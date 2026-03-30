@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>rippr — YouTube Transcript Ripper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-row">
+        <div class="mascot-frame">
+          <img class="mascot" src="icons/icon128.png" width="46" height="46" alt="rippr mascot" />
+        </div>
+        <div class="brand">
+          <h1 class="brand-name">rippr</h1>
+          <div class="brand-tag">TRANSCRIPT RIPPER</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- URL Input -->
+    <section class="input-section">
+      <div class="input-wrapper">
+        <input
+          type="text"
+          id="url-input"
+          class="url-input"
+          placeholder="Paste YouTube URL..."
+          spellcheck="false"
+          autocomplete="off"
+        />
+        <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Format Presets -->
+    <section class="presets-section">
+      <div class="section-header">
+        <span class="section-label">// output_format</span>
+      </div>
+      <div class="presets-grid">
+        <button class="preset-chip active" data-format="txt">
+          <span class="chip-indicator"></span>
+          <div class="chip-content">
+            <span class="chip-name">RAG</span>
+            <span class="chip-ext">.txt</span>
+          </div>
+          <span class="chip-badge">default</span>
+        </button>
+        <button class="preset-chip" data-format="json">
+          <span class="chip-indicator"></span>
+          <div class="chip-content">
+            <span class="chip-name">Structured</span>
+            <span class="chip-ext">.json</span>
+          </div>
+        </button>
+        <button class="preset-chip" data-format="md">
+          <span class="chip-indicator"></span>
+          <div class="chip-content">
+            <span class="chip-name">Readable</span>
+            <span class="chip-ext">.md</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Rip Button -->
+    <button id="rip-btn" class="rip-btn" disabled>
+      <span class="rip-btn-text">Paste a URL to start</span>
+      <span class="rip-btn-loader" aria-hidden="true"></span>
+    </button>
+
+    <!-- Status message -->
+    <div id="status-msg" class="status-msg" aria-live="polite"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-version">v2.0.0</span>
+      <span class="footer-tagline">rip &middot; feed &middot; learn</span>
+    </footer>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+/* ── rippr In-Page Button ─────────────────────────────── */
+
+#rippr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 18px;
+  background: #222;
+  color: #e0e0e0;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  white-space: nowrap;
+  margin-left: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+#rippr-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(126, 203, 170, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+#rippr-btn:hover {
+  background: #2a2a2a;
+  box-shadow: 0 0 12px rgba(126, 203, 170, 0.15);
+}
+
+#rippr-btn:hover::before {
+  opacity: 1;
+}
+
+#rippr-btn:active {
+  transform: scale(0.97);
+}
+
+#rippr-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+#rippr-btn .rippr-mascot-inline {
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 0 4px rgba(126, 203, 170, 0.3));
+}
+
+#rippr-btn.rippr-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+#rippr-btn.rippr-loading::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top-color: #7ecbaa;
+  border-radius: 50%;
+  animation: rippr-spin 0.6s linear infinite;
+  margin-left: 4px;
+}
+
+@keyframes rippr-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Dropdown Menu ───────────────────────────────────── */
+
+#rippr-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 9999;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  padding: 18px;
+  min-width: 270px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  animation: rippr-slide-in 0.2s ease-out;
+}
+
+@keyframes rippr-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.rippr-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #262626;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.rippr-menu-header svg {
+  color: #7ecbaa;
+}
+
+.rippr-menu-group {
+  margin-bottom: 14px;
+}
+
+.rippr-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #666;
+  margin-bottom: 6px;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.rippr-select {
+  width: 100%;
+  padding: 9px 12px;
+  background: #141414;
+  color: #e0e0e0;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.rippr-select:hover {
+  border-color: #444;
+}
+
+.rippr-select:focus {
+  border-color: #7ecbaa;
+  box-shadow: 0 0 0 2px rgba(126, 203, 170, 0.1);
+}
+
+/* ── Auto-generated notice ──────────────────────────── */
+
+.rippr-auto-notice {
+  font-size: 11px;
+  color: #b08800;
+  background: rgba(176, 136, 0, 0.08);
+  border: 1px solid rgba(176, 136, 0, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+/* ── Preset Chips ────────────────────────────────────── */
+
+.rippr-format-chips {
+  display: flex;
+  gap: 6px;
+}
+
+.rippr-chip {
+  flex: 1;
+  padding: 8px 4px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.rippr-chip:hover {
+  border-color: #444;
+  color: #ccc;
+}
+
+.rippr-chip.active {
+  background: rgba(126, 203, 170, 0.08);
+  border-color: rgba(126, 203, 170, 0.3);
+  color: #7ecbaa;
+}
+
+/* ── Toggle ──────────────────────────────────────────── */
+
+.rippr-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rippr-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.rippr-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rippr-toggle-track {
+  position: absolute;
+  inset: 0;
+  background: #2a2a2a;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rippr-toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #666;
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.rippr-toggle input:checked + .rippr-toggle-track {
+  background: rgba(126, 203, 170, 0.2);
+}
+
+.rippr-toggle input:checked + .rippr-toggle-track::after {
+  transform: translateX(16px);
+  background: #7ecbaa;
+}
+
+.rippr-toggle-label {
+  font-size: 13px;
+  color: #999;
+  cursor: pointer;
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+/* ── Download Action ─────────────────────────────────── */
+
+.rippr-download-action {
+  width: 100%;
+  padding: 11px;
+  background: #7ecbaa;
+  color: #0e0e0e;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Roboto", Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.rippr-download-action:hover {
+  background: #6dba99;
+  box-shadow: 0 4px 16px rgba(126, 203, 170, 0.25);
+}
+
+.rippr-download-action:active {
+  transform: scale(0.98);
+}
+
+.rippr-download-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.rippr-download-action.success {
+  background: #5ba88a;
+  animation: rippr-success-flash 0.3s ease;
+}
+
+@keyframes rippr-success-flash {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ── Toast ───────────────────────────────────────────── */
+
+.rippr-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1a1a1a;
+  color: #e0e0e0;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: "Roboto", Arial, sans-serif;
+  z-index: 99999;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid #2a2a2a;
+  max-width: 400px;
+  text-align: center;
+}
+
+.rippr-toast.success {
+  border-color: rgba(126, 203, 170, 0.3);
+}
+
+.rippr-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

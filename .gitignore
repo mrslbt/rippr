@@ -1,0 +1,6 @@
+.DS_Store
+*.zip
+node_modules/
+.claude/
+Transcripts/
+_metadata/
