@@ -294,7 +294,24 @@
       console.warn("[rippr] Innertube caption fetch failed:", err.message);
     }
 
-    // Strategy 2: Scrape YouTube's own transcript panel
+    // Strategy 2: Background service worker (ANDROID client)
+    if (!segments || segments.length === 0) {
+      try {
+        const bgData = await fetchViaBackground(videoId);
+        if (bgData.segments && bgData.segments.length > 0) {
+          langCode = bgData.language || "en";
+          segments = bgData.segments.map((s) => ({
+            startMs: Math.round(s.start * 1000),
+            durationMs: Math.round(s.duration * 1000),
+            text: s.text,
+          }));
+        }
+      } catch (err) {
+        console.warn("[rippr] Background worker failed:", err.message);
+      }
+    }
+
+    // Strategy 3: Scrape YouTube's own transcript panel
     if (!segments || segments.length === 0) {
       try {
         segments = await scrapeTranscriptPanel();
@@ -327,14 +344,45 @@
     return filename;
   }
 
+  // ── Fetch via background service worker (fallback) ─────
+
+  async function fetchViaBackground(videoId) {
+    return new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(
+        { action: "fetchTranscript", videoId },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else if (!response.success) {
+            reject(new Error(response.error));
+          } else {
+            resolve(response.data);
+          }
+        }
+      );
+    });
+  }
+
   // ── Get available languages ────────────────────────────
 
   async function getAvailableTracks() {
     const videoId = getVideoId();
     if (!videoId) throw new Error("Not on a YouTube video page.");
 
-    const { captionTracks } = await fetchTranscriptViaInnertube(videoId);
-    return captionTracks;
+    // Try content script Innertube first, fall back to background worker
+    try {
+      const { captionTracks } = await fetchTranscriptViaInnertube(videoId);
+      return captionTracks;
+    } catch (e) {
+      console.warn("[rippr] Content script Innertube failed:", e.message, "— using background worker");
+      const data = await fetchViaBackground(videoId);
+      return data.tracks.map((t) => ({
+        languageCode: t.lang,
+        name: { simpleText: t.name },
+        kind: t.isAuto ? "asr" : "",
+        baseUrl: "", // Not needed — download will go through background
+      }));
+    }
   }
 
   // ── UI ───────────────────────────────────────────────────
