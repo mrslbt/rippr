@@ -5,7 +5,7 @@
 <h1 align="center">rippr</h1>
 
 <p align="center">
-  <strong>YouTube transcript ripper — built for RAG and LLM workflows.</strong>
+  <strong>YouTube transcript ripper. Built for RAG and LLM workflows.</strong>
 </p>
 
 <p align="center">
@@ -21,9 +21,9 @@
 rippr extracts transcripts from any YouTube video and saves them as clean, structured files. One click on the video page, or paste a URL into the popup.
 
 **Output formats:**
-- **RAG (.txt)** — single continuous text block, optimized for chunking and embedding
-- **Structured (.json)** — timestamped segments with metadata
-- **Readable (.md)** — markdown with headers and formatting
+- **RAG (.txt)** - single continuous text block, optimized for chunking and embedding
+- **Structured (.json)** - timestamped segments with metadata
+- **Readable (.md)** - markdown with headers and formatting
 
 ## Features
 
@@ -48,9 +48,9 @@ rippr extracts transcripts from any YouTube video and saves them as clean, struc
 
 rippr uses a multi-strategy approach to extract transcripts:
 
-1. **Innertube API** — YouTube's internal player API (primary method)
-2. **HTML scraping** — parses `ytInitialPlayerResponse` from the page source
-3. **Transcript panel** — opens YouTube's built-in transcript panel as a last resort
+1. **Innertube API** - YouTube's internal player API (primary method)
+2. **HTML scraping** - parses `ytInitialPlayerResponse` from the page source
+3. **Transcript panel** - opens YouTube's built-in transcript panel as a last resort
 
 Caption XML is parsed in multiple formats (srv3, timedtext, JSON3) for maximum compatibility.
 
