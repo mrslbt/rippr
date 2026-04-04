@@ -42,39 +42,36 @@ async function handleSummarize(request, env) {
     const transcript = await fetchTranscript(videoId);
     const fullText = transcript.segments.map((s) => s.text).join(" ");
 
-    // Truncate to ~12k tokens (~48k chars) to stay within model context
-    const truncatedText = fullText.substring(0, 48000);
+    // Truncate aggressively to avoid Workers AI timeout (~6k chars max)
+    const truncatedText = fullText.substring(0, 6000);
 
     // Call Workers AI for summary
-    const prompt = `You are a concise summarizer. Given this YouTube video transcript, provide:
+    const prompt = `Summarize this YouTube transcript concisely.
 
-1. A clear 2-3 sentence summary of the video
-2. The key points (5-8 bullet points covering the most important ideas)
-3. Any action items or takeaways the viewer should note
-
-Format your response EXACTLY like this (use these exact headers):
+Format EXACTLY:
 
 ## Summary
-[Your 2-3 sentence summary here]
+[2-3 sentences]
 
 ## Key Points
-- [Point 1]
-- [Point 2]
-...
+- [point 1]
+- [point 2]
+- [point 3]
+- [point 4]
+- [point 5]
 
 ## Takeaways
-- [Takeaway 1]
-- [Takeaway 2]
-...
+- [takeaway 1]
+- [takeaway 2]
 
 Video: "${transcript.title}" by ${transcript.channel}
 
 Transcript:
 ${truncatedText}`;
 
-    const aiResponse = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+    const aiResponse = await env.AI.run("@cf/meta/llama-3.2-3b-instruct", {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024,
+      max_tokens: 512,
     });
 
     return jsonResponse({
