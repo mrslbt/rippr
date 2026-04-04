@@ -1,0 +1,10 @@
+name = "rippr-web"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+
+[ai]
+binding = "AI"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
