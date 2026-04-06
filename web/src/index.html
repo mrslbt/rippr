@@ -66,7 +66,6 @@
       color: var(--text-primary);
       min-height: 100dvh;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
     }
 
     /* ── Atmosphere ── */
@@ -86,32 +85,58 @@
     .app {
       position: relative; z-index: 1;
       max-width: 520px; margin: 0 auto;
-      padding: 32px 24px env(safe-area-inset-bottom, 24px);
+      padding: 24px 24px calc(24px + env(safe-area-inset-bottom, 0px));
       display: flex; flex-direction: column; gap: 14px;
-      min-height: 100dvh;
     }
 
     /* ── Header ── */
     .header {
-      display: flex; align-items: center; gap: 16px;
+      display: flex; align-items: center; justify-content: space-between;
       padding-bottom: 8px;
     }
+    .header-left {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .header-links {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .header-links a {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--text-muted); text-decoration: none;
+      transition: color 0.2s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .header-links a:hover { color: var(--mint); }
+    .chrome-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px 4px 7px;
+      background: rgba(126,203,170,0.06);
+      border: 1px solid rgba(126,203,170,0.12);
+      border-radius: 6px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--mint); text-decoration: none;
+      transition: all 0.2s var(--ease);
+    }
+    .chrome-badge:hover {
+      background: rgba(126,203,170,0.12);
+      border-color: rgba(126,203,170,0.25);
+    }
     .logo {
-      width: 48px; height: 48px; border-radius: 12px;
+      width: 44px; height: 44px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .logo img { border-radius: 12px; display: block; }
+    .logo img { border-radius: 10px; display: block; width: 44px; height: 44px; }
     .brand h1 {
-      font-family: 'Silkscreen', cursive; font-size: 28px; font-weight: 700;
+      font-family: 'Silkscreen', cursive; font-size: 24px; font-weight: 700;
       letter-spacing: 1px; line-height: 1;
       background: linear-gradient(135deg, var(--text-primary) 0%, var(--mint) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     .brand .tag {
-      font-size: 9px; letter-spacing: 3px; color: var(--text-muted);
-      text-transform: uppercase; margin-top: 5px;
+      font-size: 8px; letter-spacing: 3px; color: var(--text-muted);
+      text-transform: uppercase; margin-top: 4px;
     }
 
     /* ── URL Input ── */
@@ -409,10 +434,22 @@
   <div class="app">
     <!-- Header -->
     <header class="header">
-      <div class="logo"><img src="/icon.png" alt="rippr" width="48" height="48"></div>
-      <div class="brand">
-        <h1>rippr</h1>
-        <div class="tag">TRANSCRIPT RIPPER</div>
+      <div class="header-left">
+        <div class="logo"><img src="/icon.png" alt="rippr" width="48" height="48"></div>
+        <div class="brand">
+          <h1>rippr</h1>
+          <div class="tag">YOUTUBE &rarr; TEXT</div>
+        </div>
+      </div>
+      <div class="header-links">
+        <a class="chrome-badge" href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M21.17 8H12M8 12L3.55 4.35M14 12l-2.83 8.27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Chrome
+        </a>
+        <a href="https://www.npmjs.com/package/rippr-mcp" target="_blank" rel="noopener">MCP</a>
+        <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
       </div>
     </header>
 
@@ -429,7 +466,7 @@
 
     <!-- Mode Tabs -->
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="rip">Rip</button>
+      <button class="mode-tab active" data-mode="rip">Rip transcript</button>
       <button class="mode-tab" data-mode="summarize">Summarize</button>
     </div>
 
@@ -471,21 +508,11 @@
     <!-- Status -->
     <div class="status" id="status" aria-live="polite"></div>
 
-    <!-- How It Works (empty state) -->
+    <!-- Info (empty state) -->
     <div class="how-it-works" id="how-it-works">
-      <span class="how-label">// how_it_works</span>
       <div class="steps">
         <div class="step">
-          <span class="step-num">1</span>
-          <span class="step-text"><strong>Paste</strong> a YouTube URL</span>
-        </div>
-        <div class="step">
-          <span class="step-num">2</span>
-          <span class="step-text"><strong>Pick</strong> Rip (download transcript) or Summarize (AI summary)</span>
-        </div>
-        <div class="step">
-          <span class="step-num">3</span>
-          <span class="step-text"><strong>Get</strong> clean output for RAG, notes, or research</span>
+          <span class="step-text"><strong>Paste</strong> a YouTube URL, <strong>rip</strong> the transcript or <strong>summarize</strong> with AI.</span>
         </div>
       </div>
       <div class="perks">
@@ -494,21 +521,6 @@
         <span>No ads</span><span class="dot">&middot;</span>
         <span>Mobile-friendly</span>
       </div>
-    </div>
-
-    <!-- Extension Promo -->
-    <div class="ext-promo" id="ext-promo">
-      <div class="ext-promo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);opacity:0.4"/>
-          <path d="M8 12l3 3 5-6" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="ext-promo-body">
-        <div class="ext-promo-title">Now on Chrome Web Store</div>
-        <div class="ext-promo-desc">Rip transcripts directly from YouTube with the browser extension. <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg?hl=en-US&utm_source=ext_sidebar" class="ext-promo-link" target="_blank" rel="noopener">Install rippr &rarr;</a></div>
-      </div>
-      <button class="ext-promo-close" id="ext-promo-close" title="Dismiss" aria-label="Dismiss">&times;</button>
     </div>
 
     <!-- Summary Results -->
@@ -533,30 +545,11 @@
       </div>
     </div>
 
-    <!-- MCP Promo -->
-    <div class="ext-promo" id="mcp-promo">
-      <div class="ext-promo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);opacity:0.4"/>
-          <path d="M8 12h8M12 8v8" stroke="var(--mint)" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="ext-promo-body">
-        <div class="ext-promo-title">MCP Server for AI Agents</div>
-        <div class="ext-promo-desc">Connect rippr to Claude, Cursor, or any MCP client. <code style="font-size:10px;background:rgba(126,203,170,0.08);padding:1px 5px;border-radius:3px;color:var(--mint)">npx rippr-mcp</code> <a href="https://www.npmjs.com/package/rippr-mcp" class="ext-promo-link" target="_blank" rel="noopener">View on npm &rarr;</a></div>
-      </div>
-      <button class="ext-promo-close" id="mcp-promo-close" title="Dismiss" aria-label="Dismiss">&times;</button>
-    </div>
-
     <!-- Footer -->
     <footer class="footer">
-      <span>v2.0</span>
-      <span class="sep">/</span>
       <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">github</a>
       <span class="sep">/</span>
-      <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener">extension</a>
-      <span class="sep">/</span>
-      <a href="https://www.npmjs.com/package/rippr-mcp" target="_blank" rel="noopener">mcp</a>
+      <a href="https://x.com/bymarselb" target="_blank" rel="noopener">@bymarsel</a>
     </footer>
   </div>
 
@@ -841,23 +834,6 @@
       }
     });
 
-    // ── Extension promo dismiss ──
-    if (localStorage.getItem("ext-promo-dismissed")) {
-      $("ext-promo").classList.add("hidden");
-    }
-    $("ext-promo-close").addEventListener("click", () => {
-      $("ext-promo").classList.add("hidden");
-      localStorage.setItem("ext-promo-dismissed", "1");
-    });
-
-    // ── MCP promo dismiss ──
-    if (localStorage.getItem("mcp-promo-dismissed")) {
-      $("mcp-promo").classList.add("hidden");
-    }
-    $("mcp-promo-close").addEventListener("click", () => {
-      $("mcp-promo").classList.add("hidden");
-      localStorage.setItem("mcp-promo-dismissed", "1");
-    });
 
     $("new-btn").addEventListener("click", () => {
       urlInput.value = "";
