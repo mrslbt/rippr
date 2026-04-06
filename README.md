@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://rippr.bymarsel.me/"><strong>Website</strong></a> · <a href="https://chromewebstore.google.com/detail/rippr"><strong>Chrome Web Store</strong></a>
+  <a href="https://rippr.me"><strong>Website</strong></a> · <a href="https://chromewebstore.google.com/detail/rippr"><strong>Chrome Web Store</strong></a>
 </p>
 
 ---
