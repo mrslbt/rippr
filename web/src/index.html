@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>rippr — YouTube Video Summarizer</title>
-  <meta name="description" content="Paste a YouTube URL, get an AI-powered summary with key points. Fast, free, mobile-friendly.">
+  <title>rippr — YouTube Transcript Ripper & Summarizer</title>
+  <meta name="description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, mobile-friendly.">
   <meta name="theme-color" content="#0a0d12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,6 +16,7 @@
       --mint: #7ecbaa;
       --mint-glow: rgba(126,203,170,0.4);
       --mint-subtle: rgba(126,203,170,0.08);
+      --mint-dim: rgba(126,203,170,0.15);
       --bg-deep: #0a0d12;
       --bg-base: #0d1117;
       --bg-raised: #141a22;
@@ -27,6 +28,7 @@
       --red: #f85149;
       --green: #3fb950;
       --ease: cubic-bezier(0.16,1,0.3,1);
+      --spring: cubic-bezier(0.34,1.56,0.64,1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,31 +42,30 @@
       overflow-x: hidden;
     }
 
+    /* ── Atmosphere ── */
     .crt {
       position: fixed; inset: 0; pointer-events: none; z-index: 100;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
     }
-
     .glow {
       position: fixed; top: -40%; left: -20%; width: 140%; height: 80%;
       background: radial-gradient(ellipse at 50% 0%, rgba(126,203,170,0.06) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
       animation: pulse 6s ease-in-out infinite;
     }
-
     @keyframes pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
 
+    /* ── Layout ── */
     .app {
       position: relative; z-index: 1;
       max-width: 480px; margin: 0 auto;
       padding: 24px 20px env(safe-area-inset-bottom, 20px);
-      display: flex; flex-direction: column; gap: 18px;
+      display: flex; flex-direction: column; gap: 16px;
       min-height: 100dvh;
     }
 
     /* ── Header ── */
     .header { display: flex; align-items: center; gap: 14px; }
-
     .logo {
       width: 52px; height: 52px; border-radius: 14px;
       background: linear-gradient(135deg, var(--bg-raised), var(--bg-base));
@@ -73,51 +74,101 @@
       font-size: 28px; flex-shrink: 0;
       animation: bob 4s ease-in-out infinite;
     }
-
     @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-
     .brand h1 {
       font-family: 'Silkscreen', cursive; font-size: 26px; font-weight: 700;
       letter-spacing: 1px; line-height: 1;
       text-shadow: 0 0 30px rgba(126,203,170,0.15);
     }
-
     .brand .tag {
       font-size: 9px; letter-spacing: 3px; color: var(--text-muted);
       text-transform: uppercase; margin-top: 4px;
     }
 
-    /* ── Input ── */
+    /* ── URL Input ── */
     .input-wrap {
       display: flex; align-items: center;
       background: var(--bg-base); border: 1px solid var(--border-subtle);
       border-radius: 12px; overflow: hidden;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-
     .input-wrap:focus-within {
       border-color: var(--mint);
       box-shadow: 0 0 0 3px rgba(126,203,170,0.08);
     }
-
     .input-wrap input {
       flex: 1; padding: 14px 16px; background: transparent; border: none;
       color: var(--text-primary); font-family: inherit; font-size: 14px;
       outline: none;
     }
-
     .input-wrap input::placeholder { color: var(--text-muted); }
-
-    .paste-btn {
-      padding: 12px 16px; background: transparent; border: none;
+    .icon-btn {
+      padding: 12px 14px; background: transparent; border: none;
       color: var(--text-muted); cursor: pointer; transition: color 0.2s;
       display: flex; align-items: center;
     }
+    .icon-btn:hover, .icon-btn:active { color: var(--mint); }
 
-    .paste-btn:hover, .paste-btn:active { color: var(--mint); }
+    /* ── Mode Tabs ── */
+    .mode-tabs {
+      display: flex; gap: 4px; padding: 4px;
+      background: var(--bg-base); border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+    .mode-tab {
+      flex: 1; padding: 10px 0; border: none; border-radius: 9px;
+      font-family: 'Silkscreen', cursive; font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; cursor: pointer;
+      background: transparent; color: var(--text-muted);
+      transition: all 0.25s var(--ease);
+    }
+    .mode-tab.active {
+      background: var(--mint-subtle); color: var(--mint);
+      box-shadow: 0 0 12px rgba(126,203,170,0.08);
+    }
+    .mode-tab:not(.active):hover { color: var(--text-secondary); }
 
-    /* ── Button ── */
-    .rip-btn {
+    /* ── Panels ── */
+    .panel { display: none; flex-direction: column; gap: 12px; }
+    .panel.active { display: flex; animation: fadeUp 0.3s var(--ease) both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Format Presets (Rip mode) ── */
+    .section-label {
+      font-size: 11px; letter-spacing: 0.5px; color: var(--text-muted);
+      font-style: italic; margin-bottom: -4px;
+    }
+    .presets { display: flex; flex-direction: column; gap: 5px; }
+    .preset {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; background: var(--bg-base);
+      border: 1px solid var(--border-subtle); border-radius: 10px;
+      cursor: pointer; transition: all 0.2s var(--ease);
+      font-family: inherit; color: var(--text-primary); text-align: left;
+    }
+    .preset:hover { border-color: var(--border-active); transform: translateX(3px); }
+    .preset .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      border: 1.5px solid var(--text-muted); flex-shrink: 0;
+      transition: all 0.2s var(--spring);
+    }
+    .preset .label { flex: 1; display: flex; align-items: baseline; gap: 8px; }
+    .preset .name { font-size: 13px; font-weight: 700; color: var(--text-secondary); transition: color 0.2s; }
+    .preset .ext { font-size: 11px; color: var(--text-muted); }
+    .preset .badge {
+      font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 6px; background: var(--mint-subtle);
+      color: var(--mint); opacity: 0; transform: translateX(8px);
+      transition: all 0.2s var(--ease);
+    }
+    .preset.active { border-color: var(--border-active); background: rgba(126,203,170,0.03); }
+    .preset.active .dot { border-color: var(--mint); background: var(--mint); box-shadow: 0 0 8px var(--mint-glow); }
+    .preset.active .name { color: var(--mint); }
+    .preset.active .ext { color: #9dd5be; }
+    .preset.active .badge { opacity: 1; transform: translateX(0); }
+
+    /* ── Action Button ── */
+    .action-btn-main {
       position: relative; width: 100%; padding: 16px;
       border: 1px solid var(--border-subtle); border-radius: 12px;
       font-family: 'Silkscreen', cursive; font-size: 15px; font-weight: 700;
@@ -125,29 +176,24 @@
       transition: all 0.2s; overflow: hidden;
       background: var(--bg-raised); color: var(--text-muted);
     }
-
-    .rip-btn:not(:disabled) {
+    .action-btn-main:not(:disabled) {
       background: var(--mint); color: #0a0d12; border-color: var(--mint);
     }
-
-    .rip-btn:not(:disabled):hover {
+    .action-btn-main:not(:disabled):hover {
       background: #6dba99; box-shadow: 0 4px 20px rgba(126,203,170,0.3);
       transform: translateY(-1px);
     }
-
-    .rip-btn:not(:disabled):active { transform: translateY(0) scale(0.99); }
-    .rip-btn:disabled { cursor: default; }
-
-    .rip-btn.loading .btn-text { opacity: 0; }
-    .rip-btn.loading .spinner { display: block; }
-
+    .action-btn-main:not(:disabled):active { transform: translateY(0) scale(0.99); }
+    .action-btn-main:disabled { cursor: default; }
+    .action-btn-main.loading .btn-text { opacity: 0; }
+    .action-btn-main.loading .spinner { display: block; }
+    .action-btn-main.success { background: var(--green) !important; color: #fff !important; border-color: var(--green) !important; }
     .spinner {
       display: none; position: absolute; top: 50%; left: 50%;
       width: 22px; height: 22px; margin: -11px 0 0 -11px;
       border: 2.5px solid rgba(10,13,18,0.3); border-top-color: #0a0d12;
       border-radius: 50%; animation: spin 0.6s linear infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── Status ── */
@@ -155,32 +201,21 @@
       font-size: 12px; text-align: center; min-height: 18px;
       color: var(--text-secondary); line-height: 1.5;
     }
-
     .status.error { color: var(--red); }
 
-    /* ── Results ── */
+    /* ── Summary Results ── */
     .results {
-      display: none; flex-direction: column; gap: 16px;
+      display: none; flex-direction: column; gap: 14px;
       animation: fadeUp 0.4s var(--ease) both;
     }
-
     .results.visible { display: flex; }
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
     .result-header {
-      padding: 16px; background: var(--bg-base);
+      padding: 14px 16px; background: var(--bg-base);
       border: 1px solid var(--border-subtle); border-radius: 12px;
     }
-
-    .result-title {
-      font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 4px;
-    }
-
-    .result-channel {
-      font-size: 11px; color: var(--text-secondary);
-    }
-
+    .result-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
+    .result-channel { font-size: 11px; color: var(--text-secondary); }
     .result-badge {
       display: inline-block; margin-top: 8px; padding: 2px 8px;
       font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
@@ -188,51 +223,39 @@
     }
 
     .result-section {
-      padding: 16px; background: var(--bg-base);
+      padding: 14px 16px; background: var(--bg-base);
       border: 1px solid var(--border-subtle); border-radius: 12px;
     }
-
     .result-section h2 {
       font-family: 'Silkscreen', cursive; font-size: 12px;
-      color: var(--mint); letter-spacing: 1px; margin-bottom: 12px;
+      color: var(--mint); letter-spacing: 1px; margin-bottom: 10px;
     }
-
     .result-section .content {
       font-size: 13px; line-height: 1.7; color: var(--text-secondary);
     }
-
     .result-section .content p { margin-bottom: 8px; }
     .result-section .content p:last-child { margin-bottom: 0; }
-
     .result-section .content ul {
       list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;
     }
-
-    .result-section .content li {
-      padding-left: 16px; position: relative;
-    }
-
+    .result-section .content li { padding-left: 16px; position: relative; }
     .result-section .content li::before {
       content: ''; position: absolute; left: 0; top: 8px;
       width: 6px; height: 6px; border-radius: 50%;
       background: var(--mint); opacity: 0.6;
     }
 
-    /* ── Actions ── */
-    .actions {
-      display: flex; gap: 8px;
-    }
-
-    .action-btn {
-      flex: 1; padding: 12px; background: var(--bg-base);
+    /* ── Bottom Actions ── */
+    .bottom-actions { display: flex; gap: 8px; }
+    .btn-sm {
+      flex: 1; padding: 11px 8px; background: var(--bg-base);
       border: 1px solid var(--border-subtle); border-radius: 10px;
       font-family: inherit; font-size: 11px; font-weight: 700;
       color: var(--text-secondary); cursor: pointer;
-      transition: all 0.2s; text-align: center; letter-spacing: 0.5px;
+      transition: all 0.2s; text-align: center; letter-spacing: 0.3px;
     }
-
-    .action-btn:hover { border-color: var(--border-active); color: var(--mint); }
-    .action-btn:active { transform: scale(0.98); }
+    .btn-sm:hover { border-color: var(--border-active); color: var(--mint); }
+    .btn-sm:active { transform: scale(0.98); }
 
     /* ── Footer ── */
     .footer {
@@ -241,15 +264,15 @@
       display: flex; justify-content: space-between;
       font-size: 10px; color: var(--text-muted);
     }
-
     .footer a { color: var(--text-muted); text-decoration: none; }
     .footer a:hover { color: var(--mint); }
 
-    /* ── Animations ── */
+    /* ── Entry Animations ── */
     .header { animation: fadeUp 0.4s var(--ease) both; }
-    .input-wrap { animation: fadeUp 0.4s var(--ease) 0.06s both; }
-    .rip-btn { animation: fadeUp 0.4s var(--ease) 0.12s both; }
-    .footer { animation: fadeUp 0.4s var(--ease) 0.18s both; }
+    .input-wrap { animation: fadeUp 0.4s var(--ease) 0.04s both; }
+    .mode-tabs { animation: fadeUp 0.4s var(--ease) 0.08s both; }
+    .panel { animation: fadeUp 0.4s var(--ease) 0.12s both; }
+    .footer { animation: fadeUp 0.4s var(--ease) 0.16s both; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -261,17 +284,19 @@
   <div class="glow" aria-hidden="true"></div>
 
   <div class="app">
+    <!-- Header -->
     <header class="header">
       <div class="logo">🎬</div>
       <div class="brand">
         <h1>rippr</h1>
-        <div class="tag">VIDEO SUMMARIZER</div>
+        <div class="tag">TRANSCRIPT RIPPER</div>
       </div>
     </header>
 
+    <!-- URL Input -->
     <div class="input-wrap">
       <input type="url" id="url" placeholder="Paste YouTube URL..." autocomplete="off" spellcheck="false" enterkeyhint="go">
-      <button class="paste-btn" id="paste" title="Paste from clipboard">
+      <button class="icon-btn" id="paste" title="Paste from clipboard">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -279,13 +304,51 @@
       </button>
     </div>
 
-    <button class="rip-btn" id="rip" disabled>
-      <span class="btn-text">Paste a URL to start</span>
-      <span class="spinner" aria-hidden="true"></span>
-    </button>
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="rip">Rip</button>
+      <button class="mode-tab" data-mode="summarize">Summarize</button>
+    </div>
 
+    <!-- ═══ RIP Panel ═══ -->
+    <div class="panel active" id="panel-rip">
+      <span class="section-label">// output_format</span>
+      <div class="presets">
+        <button class="preset active" data-format="txt">
+          <span class="dot"></span>
+          <div class="label"><span class="name">RAG</span><span class="ext">.txt</span></div>
+          <span class="badge">default</span>
+        </button>
+        <button class="preset" data-format="json">
+          <span class="dot"></span>
+          <div class="label"><span class="name">Structured</span><span class="ext">.json</span></div>
+          <span class="badge">default</span>
+        </button>
+        <button class="preset" data-format="md">
+          <span class="dot"></span>
+          <div class="label"><span class="name">Readable</span><span class="ext">.md</span></div>
+          <span class="badge">default</span>
+        </button>
+      </div>
+
+      <button class="action-btn-main" id="rip-btn" disabled>
+        <span class="btn-text">Paste a URL to start</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <!-- ═══ SUMMARIZE Panel ═══ -->
+    <div class="panel" id="panel-summarize">
+      <button class="action-btn-main" id="sum-btn" disabled>
+        <span class="btn-text">Paste a URL to start</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <!-- Status -->
     <div class="status" id="status" aria-live="polite"></div>
 
+    <!-- Summary Results -->
     <div class="results" id="results">
       <div class="result-header" id="result-header"></div>
       <div class="result-section" id="summary-section">
@@ -300,66 +363,143 @@
         <h2>Takeaways</h2>
         <div class="content" id="takeaways-content"></div>
       </div>
-      <div class="actions">
-        <button class="action-btn" id="copy-btn">Copy Summary</button>
-        <button class="action-btn" id="share-btn">Share</button>
-        <button class="action-btn" id="new-btn">New Video</button>
+      <div class="bottom-actions">
+        <button class="btn-sm" id="copy-btn">Copy</button>
+        <button class="btn-sm" id="share-btn">Share</button>
+        <button class="btn-sm" id="new-btn">New</button>
       </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
       <span>v1.0.0</span>
       <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">github</a>
-      <span>rip &middot; summarize &middot; learn</span>
+      <span>rip &middot; feed &middot; learn</span>
     </footer>
   </div>
 
   <script>
-    const $ = (s) => document.getElementById(s);
+    const $ = (id) => document.getElementById(id);
     const urlInput = $("url");
-    const ripBtn = $("rip");
+    const ripBtn = $("rip-btn");
+    const sumBtn = $("sum-btn");
     const statusEl = $("status");
     const resultsEl = $("results");
 
+    let currentMode = "rip";
+    let selectedFormat = "txt";
     let lastResult = null;
 
-    // Validate URL
-    function isYouTubeUrl(str) {
-      if (!str) return false;
-      return /(?:youtube\.com\/(?:watch|embed|v|shorts)|youtu\.be\/|^[a-zA-Z0-9_-]{11}$)/.test(str.trim());
+    // ── URL validation ──
+    function isYT(str) {
+      return str && /(?:youtube\.com\/(?:watch|embed|v|shorts)|youtu\.be\/|^[a-zA-Z0-9_-]{11}$)/.test(str.trim());
     }
 
-    function updateButton() {
-      const valid = isYouTubeUrl(urlInput.value);
+    function updateButtons() {
+      const valid = isYT(urlInput.value);
       ripBtn.disabled = !valid;
-      ripBtn.querySelector(".btn-text").textContent = valid ? "Summarize" : "Paste a URL to start";
+      sumBtn.disabled = !valid;
+      ripBtn.querySelector(".btn-text").textContent = valid ? "Rip Transcript" : "Paste a URL to start";
+      sumBtn.querySelector(".btn-text").textContent = valid ? "Summarize" : "Paste a URL to start";
     }
 
-    urlInput.addEventListener("input", updateButton);
+    urlInput.addEventListener("input", updateButtons);
 
-    // Paste button
+    // ── Paste button ──
     $("paste").addEventListener("click", async () => {
       try {
         const text = await navigator.clipboard.readText();
         urlInput.value = text;
-        updateButton();
-        if (isYouTubeUrl(text)) ripBtn.focus();
-      } catch { /* clipboard denied */ }
+        updateButtons();
+        if (isYT(text)) {
+          if (currentMode === "rip") ripBtn.focus();
+          else sumBtn.focus();
+        }
+      } catch {}
     });
 
-    // Submit on Enter
+    // ── Enter key ──
     urlInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !ripBtn.disabled) ripBtn.click();
+      if (e.key === "Enter") {
+        if (currentMode === "rip" && !ripBtn.disabled) ripBtn.click();
+        else if (currentMode === "summarize" && !sumBtn.disabled) sumBtn.click();
+      }
     });
 
-    // Main action
+    // ── Mode tabs ──
+    document.querySelectorAll(".mode-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        currentMode = tab.dataset.mode;
+        document.querySelectorAll(".mode-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+        $("panel-" + currentMode).classList.add("active");
+        resultsEl.classList.remove("visible");
+        statusEl.textContent = "";
+        statusEl.className = "status";
+      });
+    });
+
+    // ── Format presets ──
+    document.querySelectorAll(".preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".preset").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedFormat = btn.dataset.format;
+      });
+    });
+
+    // ── RIP action ──
     ripBtn.addEventListener("click", async () => {
       const url = urlInput.value.trim();
-      if (!url || ripBtn.disabled) return;
+      if (!url) return;
 
       ripBtn.classList.add("loading");
       ripBtn.disabled = true;
       statusEl.textContent = "Extracting transcript...";
+      statusEl.className = "status";
+      resultsEl.classList.remove("visible");
+
+      try {
+        const resp = await fetch("/api/rip", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || "Something went wrong");
+
+        const output = buildOutput(data, selectedFormat);
+        const ext = selectedFormat;
+        const filename = sanitize(data.title) + "." + ext;
+
+        downloadFile(output, filename);
+
+        statusEl.textContent = `Downloaded ${filename}`;
+        statusEl.className = "status";
+        ripBtn.classList.add("success");
+        ripBtn.querySelector(".btn-text").textContent = "Downloaded!";
+        setTimeout(() => {
+          ripBtn.classList.remove("success");
+          updateButtons();
+        }, 2000);
+      } catch (e) {
+        statusEl.textContent = e.message;
+        statusEl.className = "status error";
+      } finally {
+        ripBtn.classList.remove("loading");
+        if (!ripBtn.classList.contains("success")) updateButtons();
+      }
+    });
+
+    // ── SUMMARIZE action ──
+    sumBtn.addEventListener("click", async () => {
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      sumBtn.classList.add("loading");
+      sumBtn.disabled = true;
+      statusEl.textContent = "Summarizing...";
       statusEl.className = "status";
       resultsEl.classList.remove("visible");
 
@@ -369,35 +509,85 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url }),
         });
-
         const data = await resp.json();
-
         if (!resp.ok) throw new Error(data.error || "Something went wrong");
 
         lastResult = data;
-        renderResults(data);
+        renderSummary(data);
         statusEl.textContent = "";
       } catch (e) {
         statusEl.textContent = e.message;
         statusEl.className = "status error";
       } finally {
-        ripBtn.classList.remove("loading");
-        updateButton();
+        sumBtn.classList.remove("loading");
+        updateButtons();
       }
     });
 
-    function renderResults(data) {
-      // Header
-      $("result-header").innerHTML = `
-        <div class="result-title">${esc(data.title)}</div>
-        <div class="result-channel">${esc(data.channel)}</div>
-        ${data.isAuto ? '<span class="result-badge">auto-generated captions</span>' : ""}
-      `;
+    // ── Build output (mirrors extension shared.js) ──
+    function buildOutput(data, format) {
+      const { title, channel, language, videoUrl, segments } = data;
 
-      // Parse markdown-ish response
-      const content = data.content || "";
-      const sections = parseSections(content);
+      if (format === "json") {
+        return JSON.stringify({
+          title, channel, url: videoUrl, language,
+          segments: segments.map((s) => ({ start: s.start, duration: s.duration, text: s.text })),
+          fullText: segments.map((s) => s.text).join(" "),
+        }, null, 2);
+      }
 
+      const lines = [];
+      if (format === "md") {
+        lines.push("# " + title, "");
+        lines.push("**Channel:** " + channel);
+        lines.push("**URL:** " + videoUrl);
+        lines.push("**Language:** " + language, "", "---", "");
+      } else {
+        lines.push("Title: " + title);
+        lines.push("Channel: " + channel);
+        lines.push("URL: " + videoUrl);
+        lines.push("Language: " + language, "", "---", "");
+      }
+
+      for (const seg of segments) lines.push(seg.text);
+
+      let output = lines.join("\n");
+
+      // RAG: join body into single block
+      if (format === "txt") {
+        const parts = output.split("---\n\n");
+        if (parts.length === 2) {
+          const body = parts[1].split("\n").filter((l) => l.trim());
+          output = parts[0] + "---\n\n" + body.join(" ");
+        }
+      }
+
+      return output;
+    }
+
+    function sanitize(name) {
+      return name.replace(/[<>:"/\\|?*]+/g, "").trim().substring(0, 200);
+    }
+
+    function downloadFile(content, filename) {
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ── Render summary ──
+    function renderSummary(data) {
+      $("result-header").innerHTML =
+        '<div class="result-title">' + esc(data.title) + '</div>' +
+        '<div class="result-channel">' + esc(data.channel) + '</div>' +
+        (data.isAuto ? '<span class="result-badge">auto-generated captions</span>' : "");
+
+      const sections = parseSections(data.content || "");
       $("summary-content").innerHTML = sections.summary || "<p>No summary available.</p>";
       $("points-content").innerHTML = sections.keyPoints || "<p>No key points found.</p>";
 
@@ -413,84 +603,52 @@
 
     function parseSections(md) {
       const result = { summary: "", keyPoints: "", takeaways: "" };
-
-      // Split by ## headers
       const parts = md.split(/^##\s+/m).filter(Boolean);
-
       for (const part of parts) {
         const lines = part.trim().split("\n");
-        const heading = lines[0].toLowerCase().trim();
+        const h = lines[0].toLowerCase().trim();
         const body = lines.slice(1).join("\n").trim();
-
-        if (heading.includes("summary")) {
-          result.summary = mdToHtml(body);
-        } else if (heading.includes("key") || heading.includes("point")) {
-          result.keyPoints = mdToHtml(body);
-        } else if (heading.includes("takeaway") || heading.includes("action")) {
-          result.takeaways = mdToHtml(body);
-        }
+        if (h.includes("summary")) result.summary = mdToHtml(body);
+        else if (h.includes("key") || h.includes("point")) result.keyPoints = mdToHtml(body);
+        else if (h.includes("takeaway") || h.includes("action")) result.takeaways = mdToHtml(body);
       }
-
-      // Fallback: if no sections parsed, put everything in summary
-      if (!result.summary && !result.keyPoints) {
-        result.summary = mdToHtml(md);
-      }
-
+      if (!result.summary && !result.keyPoints) result.summary = mdToHtml(md);
       return result;
     }
 
     function mdToHtml(text) {
       if (!text) return "";
-
-      // Split into bullet items and paragraphs
       const lines = text.split("\n").filter((l) => l.trim());
-      const bullets = [];
-      const paragraphs = [];
-
+      const bullets = [], paragraphs = [];
       for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed.startsWith("- ") || trimmed.startsWith("* ") || /^\d+\.\s/.test(trimmed)) {
-          bullets.push(trimmed.replace(/^[-*]\s+|^\d+\.\s+/, ""));
-        } else {
-          paragraphs.push(trimmed);
-        }
+        const t = line.trim();
+        if (t.startsWith("- ") || t.startsWith("* ") || /^\d+\.\s/.test(t))
+          bullets.push(t.replace(/^[-*]\s+|^\d+\.\s+/, ""));
+        else paragraphs.push(t);
       }
-
       let html = "";
-      if (paragraphs.length) {
-        html += paragraphs.map((p) => `<p>${esc(p)}</p>`).join("");
-      }
-      if (bullets.length) {
-        html += "<ul>" + bullets.map((b) => `<li>${esc(b)}</li>`).join("") + "</ul>";
-      }
-
-      return html || `<p>${esc(text)}</p>`;
+      if (paragraphs.length) html += paragraphs.map((p) => "<p>" + esc(p) + "</p>").join("");
+      if (bullets.length) html += "<ul>" + bullets.map((b) => "<li>" + esc(b) + "</li>").join("") + "</ul>";
+      return html || "<p>" + esc(text) + "</p>";
     }
 
-    function esc(s) {
-      const d = document.createElement("div");
-      d.textContent = s;
-      return d.innerHTML;
-    }
+    function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 
-    // Copy
+    // ── Bottom actions ──
     $("copy-btn").addEventListener("click", async () => {
       if (!lastResult) return;
       try {
         await navigator.clipboard.writeText(lastResult.content);
         $("copy-btn").textContent = "Copied!";
-        setTimeout(() => ($("copy-btn").textContent = "Copy Summary"), 2000);
-      } catch { /* denied */ }
+        setTimeout(() => ($("copy-btn").textContent = "Copy"), 2000);
+      } catch {}
     });
 
-    // Share
     $("share-btn").addEventListener("click", async () => {
       if (!lastResult) return;
-      const text = `${lastResult.title}\n\n${lastResult.content}`;
+      const text = lastResult.title + "\n\n" + lastResult.content;
       if (navigator.share) {
-        try {
-          await navigator.share({ title: `rippr: ${lastResult.title}`, text });
-        } catch { /* cancelled */ }
+        try { await navigator.share({ title: "rippr: " + lastResult.title, text }); } catch {}
       } else {
         await navigator.clipboard.writeText(text);
         $("share-btn").textContent = "Copied!";
@@ -498,12 +656,13 @@
       }
     });
 
-    // New video
     $("new-btn").addEventListener("click", () => {
       urlInput.value = "";
       resultsEl.classList.remove("visible");
       lastResult = null;
-      updateButton();
+      statusEl.textContent = "";
+      statusEl.className = "status";
+      updateButtons();
       urlInput.focus();
     });
   </script>

@@ -22,6 +22,11 @@ export default {
       return handleSummarize(request, env);
     }
 
+    // API: rip transcript
+    if (url.pathname === "/api/rip" && request.method === "POST") {
+      return handleRip(request);
+    }
+
     return new Response("Not found", { status: 404 });
   },
 };
@@ -81,6 +86,30 @@ ${truncatedText}`;
       isAuto: transcript.isAuto,
       content: aiResponse.response,
       videoId,
+    });
+  } catch (e) {
+    return jsonResponse({ error: e.message }, 500);
+  }
+}
+
+async function handleRip(request) {
+  try {
+    const { url, format, timestamps } = await request.json();
+    if (!url) return jsonResponse({ error: "Missing url" }, 400);
+
+    const videoId = extractVideoId(url);
+    if (!videoId) return jsonResponse({ error: "Invalid YouTube URL" }, 400);
+
+    const transcript = await fetchTranscript(videoId);
+
+    return jsonResponse({
+      title: transcript.title,
+      channel: transcript.channel,
+      language: transcript.language,
+      isAuto: transcript.isAuto,
+      videoId,
+      videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+      segments: transcript.segments,
     });
   } catch (e) {
     return jsonResponse({ error: e.message }, 500);
