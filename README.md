@@ -14,6 +14,10 @@
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT License" />
 </p>
 
+<p align="center">
+  <a href="https://rippr.bymarsel.me/"><strong>Website</strong></a> · <a href="https://chromewebstore.google.com/detail/rippr"><strong>Chrome Web Store</strong></a>
+</p>
+
 ---
 
 ## What it does
