@@ -11,6 +11,20 @@ export default {
       return new Response(null, { headers: corsHeaders() });
     }
 
+    // Serve robots.txt
+    if (url.pathname === "/robots.txt") {
+      return new Response("User-agent: *\nAllow: /\nSitemap: https://rippr.bymarsel.me/sitemap.xml\n", {
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
+
+    // Serve sitemap
+    if (url.pathname === "/sitemap.xml") {
+      return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://rippr.bymarsel.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>`, {
+        headers: { "Content-Type": "application/xml" },
+      });
+    }
+
     // Serve icon
     if (url.pathname === "/icon.png") {
       return new Response(ICON, {
