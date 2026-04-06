@@ -288,9 +288,9 @@
 
     /* ── How It Works ── */
     .how-it-works {
-      display: flex; flex-direction: column; gap: 12px;
-      margin-top: 8px; padding-top: 20px;
-      border-top: 1px solid rgba(126,203,170,0.04);
+      display: flex; flex-direction: column; gap: 16px;
+      margin-top: 16px; padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.03);
       animation: fadeUp 0.4s var(--ease) 0.2s both;
     }
     .how-it-works.hidden { display: none; }
@@ -298,35 +298,30 @@
       font-size: 10px; letter-spacing: 0.5px; color: var(--text-muted);
       font-style: italic;
     }
-    .steps { display: flex; flex-direction: column; gap: 4px; }
+    .steps { display: flex; flex-direction: column; gap: 14px; padding-left: 2px; }
     .step {
-      display: flex; align-items: center; gap: 14px;
-      padding: 11px 14px; background: var(--bg-base);
-      border: 1px solid var(--border-subtle); border-radius: 10px;
-      transition: border-color 0.2s;
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 0;
     }
-    .step:hover { border-color: var(--border-active); }
     .step-num {
-      width: 24px; height: 24px; border-radius: 7px;
-      background: rgba(126,203,170,0.08); color: var(--mint);
-      font-family: 'Silkscreen', cursive; font-size: 10px; font-weight: 700;
+      width: 18px; height: 18px; margin-top: 1px;
+      color: var(--text-muted);
+      font-family: 'Silkscreen', cursive; font-size: 9px; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      opacity: 0.6;
     }
-    .step-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-    .step-text strong { color: var(--text-primary); font-weight: 700; }
+    .step-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .step-text strong { color: var(--text-secondary); font-weight: 700; }
 
     .perks {
-      display: flex; gap: 6px; flex-wrap: wrap;
-      padding-top: 2px;
+      display: flex; gap: 0; align-items: center;
+      padding-left: 2px;
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 0.3px;
     }
-    .perk {
-      padding: 4px 10px; border-radius: 20px;
-      border: 1px solid rgba(126,203,170,0.1);
-      background: transparent; font-size: 10px;
-      color: var(--mint); letter-spacing: 0.3px;
-      opacity: 0.7;
-    }
+    .perks span:not(.dot) { opacity: 0.7; }
+    .perks .dot { margin: 0 8px; opacity: 0.3; }
 
     /* ── Footer ── */
     .footer {
@@ -448,10 +443,10 @@
         </div>
       </div>
       <div class="perks">
-        <span class="perk">Free</span>
-        <span class="perk">No signup</span>
-        <span class="perk">No ads</span>
-        <span class="perk">Mobile-friendly</span>
+        <span>Free</span><span class="dot">&middot;</span>
+        <span>No signup</span><span class="dot">&middot;</span>
+        <span>No ads</span><span class="dot">&middot;</span>
+        <span>Mobile-friendly</span>
       </div>
     </div>
 
