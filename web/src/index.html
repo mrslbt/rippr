@@ -323,6 +323,52 @@
     .perks span:not(.dot) { opacity: 0.7; }
     .perks .dot { margin: 0 8px; opacity: 0.3; }
 
+    /* ── Extension Promo ── */
+    .ext-promo {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px;
+      background: rgba(126,203,170,0.03);
+      border: 1px solid rgba(126,203,170,0.08);
+      border-radius: 10px;
+      animation: fadeUp 0.4s var(--ease) 0.25s both;
+      position: relative;
+    }
+    .ext-promo.hidden { display: none; }
+    .ext-promo-icon {
+      flex-shrink: 0; width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .ext-promo-body {
+      flex: 1; min-width: 0;
+    }
+    .ext-promo-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: 10px; font-weight: 700;
+      color: var(--mint); letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+    .ext-promo-desc {
+      font-size: 11px; color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .ext-promo-link {
+      color: var(--text-secondary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(126,203,170,0.3);
+      transition: color 0.2s;
+    }
+    .ext-promo-link:hover { color: var(--mint); }
+    .ext-promo-close {
+      position: absolute; top: 8px; right: 8px;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); padding: 2px;
+      font-size: 14px; line-height: 1;
+      opacity: 0.4; transition: opacity 0.2s;
+    }
+    .ext-promo-close:hover { opacity: 1; }
+
     /* ── Footer ── */
     .footer {
       margin-top: auto; padding-top: 16px;
@@ -448,6 +494,21 @@
         <span>No ads</span><span class="dot">&middot;</span>
         <span>Mobile-friendly</span>
       </div>
+    </div>
+
+    <!-- Extension Promo -->
+    <div class="ext-promo" id="ext-promo">
+      <div class="ext-promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);opacity:0.4"/>
+          <path d="M8 12l3 3 5-6" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ext-promo-body">
+        <div class="ext-promo-title">Now on Chrome Web Store</div>
+        <div class="ext-promo-desc">Rip transcripts directly from YouTube with the browser extension. <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg?hl=en-US&utm_source=ext_sidebar" class="ext-promo-link" target="_blank" rel="noopener">Install rippr &rarr;</a></div>
+      </div>
+      <button class="ext-promo-close" id="ext-promo-close" title="Dismiss" aria-label="Dismiss">&times;</button>
     </div>
 
     <!-- Summary Results -->
@@ -761,6 +822,15 @@
         $("share-btn").textContent = "Copied!";
         setTimeout(() => ($("share-btn").textContent = "Share"), 2000);
       }
+    });
+
+    // ── Extension promo dismiss ──
+    if (localStorage.getItem("ext-promo-dismissed")) {
+      $("ext-promo").classList.add("hidden");
+    }
+    $("ext-promo-close").addEventListener("click", () => {
+      $("ext-promo").classList.add("hidden");
+      localStorage.setItem("ext-promo-dismissed", "1");
     });
 
     $("new-btn").addEventListener("click", () => {
