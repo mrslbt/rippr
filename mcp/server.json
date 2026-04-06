@@ -1,0 +1,20 @@
+{
+  "$schema": "https://cdn.modelcontextprotocol.io/server.schema.json",
+  "name": "io.github.mrslbt/rippr-mcp",
+  "description": "YouTube transcript extraction for AI agents. Rip full transcripts from any YouTube video.",
+  "repository": "https://github.com/mrslbt/rippr",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registry_name": "npm",
+      "name": "rippr-mcp",
+      "version": "1.0.0",
+      "runtime": "node",
+      "transport": [
+        {
+          "type": "stdio"
+        }
+      ]
+    }
+  ]
+}
