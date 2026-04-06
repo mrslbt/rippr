@@ -1,5 +1,6 @@
 import { extractVideoId, fetchTranscript } from "./transcript.js";
 import HTML from "./index.html";
+import ICON from "./icon.png";
 
 export default {
   async fetch(request, env) {
@@ -8,6 +9,13 @@ export default {
     // CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders() });
+    }
+
+    // Serve icon
+    if (url.pathname === "/icon.png") {
+      return new Response(ICON, {
+        headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
+      });
     }
 
     // Serve frontend

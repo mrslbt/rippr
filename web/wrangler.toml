@@ -8,3 +8,7 @@ binding = "AI"
 [[rules]]
 type = "Text"
 globs = ["**/*.html"]
+
+[[rules]]
+type = "Data"
+globs = ["**/*.png"]
