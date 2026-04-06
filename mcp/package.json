@@ -1,0 +1,42 @@
+{
+  "name": "rippr-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for ripping YouTube transcripts. Built for AI agents, RAG pipelines, and LLM workflows.",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "rippr-mcp": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js",
+    "start": "node build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "youtube",
+    "transcript",
+    "ai",
+    "rag",
+    "llm",
+    "claude",
+    "model-context-protocol"
+  ],
+  "author": "Marsel Bait",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrslbt/rippr"
+  },
+  "homepage": "https://rippr.me",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}

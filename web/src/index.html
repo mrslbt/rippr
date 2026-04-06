@@ -10,27 +10,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://rippr.bymarsel.me/">
+  <meta property="og:url" content="https://rippr.me/">
   <meta property="og:title" content="rippr — YouTube Transcript Ripper & Summarizer">
   <meta property="og:description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.">
-  <meta property="og:image" content="https://rippr.bymarsel.me/icon.png">
+  <meta property="og:image" content="https://rippr.me/icon.png">
   <!-- Twitter -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="rippr — YouTube Transcript Ripper & Summarizer">
   <meta name="twitter:description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.">
-  <meta name="twitter:image" content="https://rippr.bymarsel.me/icon.png">
+  <meta name="twitter:image" content="https://rippr.me/icon.png">
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "rippr",
-    "url": "https://rippr.bymarsel.me/",
+    "url": "https://rippr.me/",
     "description": "Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Any",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "image": "https://rippr.bymarsel.me/icon.png"
+    "image": "https://rippr.me/icon.png"
   }
   </script>
   <link rel="icon" type="image/png" href="/icon.png">
@@ -533,13 +533,30 @@
       </div>
     </div>
 
+    <!-- MCP Promo -->
+    <div class="ext-promo" id="mcp-promo">
+      <div class="ext-promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);opacity:0.4"/>
+          <path d="M8 12h8M12 8v8" stroke="var(--mint)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ext-promo-body">
+        <div class="ext-promo-title">MCP Server for AI Agents</div>
+        <div class="ext-promo-desc">Connect rippr to Claude, Cursor, or any MCP client. <code style="font-size:10px;background:rgba(126,203,170,0.08);padding:1px 5px;border-radius:3px;color:var(--mint)">npx rippr-mcp</code> <a href="https://www.npmjs.com/package/rippr-mcp" class="ext-promo-link" target="_blank" rel="noopener">View on npm &rarr;</a></div>
+      </div>
+      <button class="ext-promo-close" id="mcp-promo-close" title="Dismiss" aria-label="Dismiss">&times;</button>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
-      <span>v1.0</span>
+      <span>v2.0</span>
       <span class="sep">/</span>
       <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">github</a>
       <span class="sep">/</span>
-      <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener">chrome extension</a>
+      <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener">extension</a>
+      <span class="sep">/</span>
+      <a href="https://www.npmjs.com/package/rippr-mcp" target="_blank" rel="noopener">mcp</a>
     </footer>
   </div>
 
@@ -831,6 +848,15 @@
     $("ext-promo-close").addEventListener("click", () => {
       $("ext-promo").classList.add("hidden");
       localStorage.setItem("ext-promo-dismissed", "1");
+    });
+
+    // ── MCP promo dismiss ──
+    if (localStorage.getItem("mcp-promo-dismissed")) {
+      $("mcp-promo").classList.add("hidden");
+    }
+    $("mcp-promo-close").addEventListener("click", () => {
+      $("mcp-promo").classList.add("hidden");
+      localStorage.setItem("mcp-promo-dismissed", "1");
     });
 
     $("new-btn").addEventListener("click", () => {
