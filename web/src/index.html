@@ -3,41 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>rippr — YouTube Transcript Ripper & Summarizer</title>
-  <meta name="description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.">
+  <title>rippr — YouTube Transcripts, One Tool Call Away</title>
+  <meta name="description" content="YouTube transcripts for AI agents. No API keys, no scraping, no rate limits. Chrome extension and MCP server. Free, open source.">
   <meta name="theme-color" content="#0a0d12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <!-- Open Graph -->
+  <link rel="canonical" href="https://rippr.me/">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://rippr.bymarsel.me/">
-  <meta property="og:title" content="rippr — YouTube Transcript Ripper & Summarizer">
-  <meta property="og:description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.">
-  <meta property="og:image" content="https://rippr.bymarsel.me/icon.png">
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="rippr — YouTube Transcript Ripper & Summarizer">
-  <meta name="twitter:description" content="Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.">
-  <meta name="twitter:image" content="https://rippr.bymarsel.me/icon.png">
-  <!-- Structured Data -->
+  <meta property="og:url" content="https://rippr.me/">
+  <meta property="og:title" content="rippr — YouTube Transcripts, One Tool Call Away">
+  <meta property="og:description" content="YouTube transcripts for AI agents. No API keys, no scraping, no rate limits. Chrome extension and MCP server.">
+  <meta property="og:image" content="https://rippr.me/icon.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="rippr — YouTube Transcripts, One Tool Call Away">
+  <meta name="twitter:description" content="YouTube transcripts for AI agents. No API keys, no scraping, no rate limits.">
+  <meta name="twitter:image" content="https://rippr.me/icon.png">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
+    "@type": "SoftwareApplication",
     "name": "rippr",
-    "url": "https://rippr.bymarsel.me/",
-    "description": "Rip YouTube transcripts for LLM use or get AI-powered summaries. Fast, free, no signup required.",
-    "applicationCategory": "UtilitiesApplication",
+    "url": "https://rippr.me/",
+    "description": "Extract YouTube transcripts for AI agents, RAG pipelines, and LLM workflows.",
+    "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "image": "https://rippr.bymarsel.me/icon.png"
+    "image": "https://rippr.me/icon.png",
+    "author": { "@type": "Person", "name": "mrslbt", "url": "https://github.com/mrslbt" },
+    "featureList": ["YouTube transcript extraction", "Chrome extension", "MCP server for AI agents", "RAG-optimized text output", "Structured JSON output", "Markdown output"]
   }
   </script>
   <link rel="icon" type="image/png" href="/icon.png">
   <link rel="apple-touch-icon" href="/icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --mint: #7ecbaa;
@@ -47,21 +47,21 @@
       --bg-deep: #0a0d12;
       --bg-base: #0d1117;
       --bg-raised: #141a22;
+      --bg-card: #111820;
       --border-subtle: rgba(126,203,170,0.06);
       --border-active: rgba(126,203,170,0.18);
       --text-primary: #e6edf3;
       --text-secondary: #8b949e;
       --text-muted: #484f58;
-      --red: #f85149;
-      --green: #3fb950;
       --ease: cubic-bezier(0.16,1,0.3,1);
       --spring: cubic-bezier(0.34,1.56,0.64,1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Space Mono', monospace;
+      font-family: 'Space Grotesk', 'Space Mono', sans-serif;
       background: var(--bg-deep);
       color: var(--text-primary);
       min-height: 100dvh;
@@ -72,777 +72,820 @@
     /* ── Atmosphere ── */
     .crt {
       position: fixed; inset: 0; pointer-events: none; z-index: 100;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px);
     }
-    .glow {
-      position: fixed; top: -40%; left: -20%; width: 140%; height: 80%;
-      background: radial-gradient(ellipse at 50% 0%, rgba(126,203,170,0.05) 0%, transparent 70%);
+    .glow-top {
+      position: absolute; top: -300px; left: 50%; transform: translateX(-50%);
+      width: 900px; max-width: 100vw; height: 600px;
+      background: radial-gradient(ellipse at 50% 50%, rgba(126,203,170,0.07) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
-      animation: pulse 8s ease-in-out infinite;
+      animation: breathe 8s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes breathe { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-    /* ── Layout ── */
-    .app {
+    /* ── Noise texture ── */
+    .noise {
+      position: fixed; inset: 0; pointer-events: none; z-index: 99; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+    }
+
+    /* ── Page layout ── */
+    .page {
       position: relative; z-index: 1;
-      max-width: 520px; margin: 0 auto;
-      padding: 32px 24px env(safe-area-inset-bottom, 24px);
-      display: flex; flex-direction: column; gap: 14px;
-      min-height: 100dvh;
+      max-width: 720px; margin: 0 auto;
+      padding: 0 24px;
+      overflow-x: clip;
     }
 
-    /* ── Header ── */
-    .header {
-      display: flex; align-items: center; gap: 16px;
-      padding-bottom: 8px;
+    /* ── Navigation ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 0; gap: 16px;
     }
-    .logo {
-      width: 48px; height: 48px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
     }
-    .logo img { border-radius: 12px; display: block; }
-    .brand h1 {
-      font-family: 'Silkscreen', cursive; font-size: 28px; font-weight: 700;
+    .nav-brand img {
+      width: 36px; height: 36px; border-radius: 10px;
+    }
+    .nav-brand h1 {
+      font-family: 'Silkscreen', cursive; font-size: 22px; font-weight: 700;
       letter-spacing: 1px; line-height: 1;
       background: linear-gradient(135deg, var(--text-primary) 0%, var(--mint) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .brand .tag {
-      font-size: 9px; letter-spacing: 3px; color: var(--text-muted);
-      text-transform: uppercase; margin-top: 5px;
+    .nav-links {
+      display: flex; align-items: center; gap: 8px;
     }
-
-    /* ── URL Input ── */
-    .input-wrap {
-      display: flex; align-items: center;
+    .nav-link {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 8px;
       background: var(--bg-base); border: 1px solid var(--border-subtle);
-      border-radius: 12px; overflow: hidden;
-      transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
-    }
-    .input-wrap:focus-within {
-      border-color: rgba(126,203,170,0.3);
-      box-shadow: 0 0 0 3px rgba(126,203,170,0.06), 0 0 20px rgba(126,203,170,0.04);
-    }
-    .input-wrap input {
-      flex: 1; padding: 15px 16px; background: transparent; border: none;
-      color: var(--text-primary); font-family: inherit; font-size: 13px;
-      outline: none;
-    }
-    .input-wrap input::placeholder { color: var(--text-muted); }
-    .icon-btn {
-      padding: 12px 14px; background: transparent; border: none;
-      color: var(--text-muted); cursor: pointer; transition: color 0.2s;
-      display: flex; align-items: center;
-    }
-    .icon-btn:hover, .icon-btn:active { color: var(--mint); }
-
-    /* ── Mode Tabs ── */
-    .mode-tabs {
-      display: flex; gap: 4px; padding: 4px;
-      background: var(--bg-base); border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-    }
-    .mode-tab {
-      flex: 1; padding: 10px 0; border: none; border-radius: 9px;
-      font-family: 'Silkscreen', cursive; font-size: 12px; font-weight: 700;
-      letter-spacing: 1px; cursor: pointer;
-      background: transparent; color: var(--text-muted);
-      transition: all 0.25s var(--ease);
-    }
-    .mode-tab.active {
-      background: rgba(126,203,170,0.08); color: var(--mint);
-    }
-    .mode-tab:not(.active):hover { color: var(--text-secondary); }
-
-    /* ── Panels ── */
-    .panel { display: none; flex-direction: column; gap: 10px; }
-    .panel.active { display: flex; animation: fadeUp 0.3s var(--ease) both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* ── Format Presets (Rip mode) ── */
-    .section-label {
-      font-size: 10px; letter-spacing: 0.5px; color: var(--text-muted);
-      font-style: italic; margin-bottom: -2px;
-    }
-    .presets { display: flex; flex-direction: column; gap: 4px; }
-    .preset {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px; background: var(--bg-base);
-      border: 1px solid var(--border-subtle); border-radius: 10px;
-      cursor: pointer; transition: all 0.2s var(--ease);
-      font-family: inherit; color: var(--text-primary); text-align: left;
-    }
-    .preset:hover { border-color: var(--border-active); transform: translateX(2px); }
-    .preset .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      border: 1.5px solid var(--text-muted); flex-shrink: 0;
-      transition: all 0.2s var(--spring);
-    }
-    .preset .label { flex: 1; display: flex; align-items: baseline; gap: 8px; }
-    .preset .name { font-size: 13px; font-weight: 700; color: var(--text-secondary); transition: color 0.2s; }
-    .preset .ext { font-size: 11px; color: var(--text-muted); }
-    .preset .badge {
-      font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
-      padding: 2px 8px; border-radius: 6px; background: var(--mint-subtle);
-      color: var(--mint); opacity: 0; transform: translateX(8px);
+      color: var(--text-muted); text-decoration: none;
+      font-size: 11px; letter-spacing: 0.3px;
       transition: all 0.2s var(--ease);
     }
-    .preset.active { border-color: var(--border-active); background: rgba(126,203,170,0.03); }
-    .preset.active .dot { border-color: var(--mint); background: var(--mint); box-shadow: 0 0 8px var(--mint-glow); }
-    .preset.active .name { color: var(--mint); }
-    .preset.active .ext { color: #9dd5be; }
-    .preset.active .badge { opacity: 1; transform: translateX(0); }
+    .nav-link:hover { border-color: var(--border-active); color: var(--mint); }
+    .nav-link svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-    /* ── Action Button ── */
-    .action-btn-main {
-      position: relative; width: 100%; padding: 15px;
-      border: 1px solid var(--border-subtle); border-radius: 12px;
-      font-family: 'Silkscreen', cursive; font-size: 14px; font-weight: 700;
-      letter-spacing: 1px; cursor: pointer;
-      transition: all 0.25s var(--ease); overflow: hidden;
-      background: var(--bg-raised); color: var(--text-muted);
-      margin-top: 2px;
-    }
-    .action-btn-main:not(:disabled) {
-      background: var(--mint); color: #0a0d12; border-color: var(--mint);
-    }
-    .action-btn-main:not(:disabled):hover {
-      background: #6dba99; box-shadow: 0 4px 24px rgba(126,203,170,0.25);
-      transform: translateY(-1px);
-    }
-    .action-btn-main:not(:disabled):active { transform: translateY(0) scale(0.99); }
-    .action-btn-main:disabled { cursor: default; }
-    .action-btn-main.loading .btn-text { opacity: 0; }
-    .action-btn-main.loading .spinner { display: block; }
-    .action-btn-main.success { background: var(--green) !important; color: #fff !important; border-color: var(--green) !important; }
-    .spinner {
-      display: none; position: absolute; top: 50%; left: 50%;
-      width: 22px; height: 22px; margin: -11px 0 0 -11px;
-      border: 2.5px solid rgba(10,13,18,0.3); border-top-color: #0a0d12;
-      border-radius: 50%; animation: spin 0.6s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Status ── */
-    .status {
-      font-size: 11px; text-align: center; min-height: 16px;
-      color: var(--text-secondary); line-height: 1.5;
-    }
-    .status.error { color: var(--red); }
-
-    /* ── Summary Results ── */
-    .results {
-      display: none; flex-direction: column; gap: 12px;
-      animation: fadeUp 0.4s var(--ease) both;
-    }
-    .results.visible { display: flex; }
-
-    .result-header {
-      padding: 14px 16px; background: var(--bg-base);
-      border: 1px solid var(--border-subtle); border-radius: 12px;
-    }
-    .result-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 4px; }
-    .result-channel { font-size: 11px; color: var(--text-secondary); }
-    .result-badge {
-      display: inline-block; margin-top: 8px; padding: 2px 8px;
-      font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
-      border-radius: 6px; background: var(--mint-subtle); color: var(--mint);
-    }
-
-    .result-section {
-      padding: 14px 16px; background: var(--bg-base);
-      border: 1px solid var(--border-subtle); border-radius: 12px;
-    }
-    .result-section h2 {
-      font-family: 'Silkscreen', cursive; font-size: 11px;
-      color: var(--mint); letter-spacing: 1px; margin-bottom: 10px;
-    }
-    .result-section .content {
-      font-size: 13px; line-height: 1.7; color: var(--text-secondary);
-    }
-    .result-section .content p { margin-bottom: 8px; }
-    .result-section .content p:last-child { margin-bottom: 0; }
-    .result-section .content ul {
-      list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;
-    }
-    .result-section .content li { padding-left: 16px; position: relative; }
-    .result-section .content li::before {
-      content: ''; position: absolute; left: 0; top: 8px;
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--mint); opacity: 0.5;
-    }
-
-    /* ── Bottom Actions ── */
-    .bottom-actions { display: flex; gap: 8px; }
-    .btn-sm {
-      flex: 1; padding: 11px 8px; background: var(--bg-base);
-      border: 1px solid var(--border-subtle); border-radius: 10px;
-      font-family: inherit; font-size: 11px; font-weight: 700;
-      color: var(--text-secondary); cursor: pointer;
-      transition: all 0.2s; text-align: center; letter-spacing: 0.3px;
-    }
-    .btn-sm:hover { border-color: var(--border-active); color: var(--mint); }
-    .btn-sm:active { transform: scale(0.98); }
-
-    /* ── How It Works ── */
-    .how-it-works {
-      display: flex; flex-direction: column; gap: 16px;
-      margin-top: 16px; padding-top: 24px;
-      border-top: 1px solid rgba(255,255,255,0.03);
-      animation: fadeUp 0.4s var(--ease) 0.2s both;
-    }
-    .how-it-works.hidden { display: none; }
-    .how-label {
-      font-size: 10px; letter-spacing: 0.5px; color: var(--text-muted);
-      font-style: italic;
-    }
-    .steps { display: flex; flex-direction: column; gap: 14px; padding-left: 2px; }
-    .step {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 0;
-    }
-    .step-num {
-      width: 18px; height: 18px; margin-top: 1px;
-      color: var(--text-muted);
-      font-family: 'Silkscreen', cursive; font-size: 9px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      opacity: 0.6;
-    }
-    .step-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-    .step-text strong { color: var(--text-secondary); font-weight: 700; }
-
-    .perks {
-      display: flex; gap: 0; align-items: center;
-      padding-left: 2px;
-      font-size: 10px; color: var(--text-muted);
-      letter-spacing: 0.3px;
-    }
-    .perks span:not(.dot) { opacity: 0.7; }
-    .perks .dot { margin: 0 8px; opacity: 0.3; }
-
-    /* ── Extension Promo ── */
-    .ext-promo {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 12px 14px;
-      background: rgba(126,203,170,0.03);
-      border: 1px solid rgba(126,203,170,0.08);
-      border-radius: 10px;
-      animation: fadeUp 0.4s var(--ease) 0.25s both;
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
       position: relative;
     }
-    .ext-promo.hidden { display: none; }
-    .ext-promo-icon {
-      flex-shrink: 0; width: 28px; height: 28px;
-      display: flex; align-items: center; justify-content: center;
-      margin-top: 1px;
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px 5px 8px; border-radius: 100px;
+      background: var(--mint-subtle); border: 1px solid var(--mint-dim);
+      color: var(--mint); font-size: 11px; letter-spacing: 0.5px;
+      margin-bottom: 28px;
+      animation: fadeIn 0.6s var(--ease) both;
     }
-    .ext-promo-body {
-      flex: 1; min-width: 0;
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--mint);
+      animation: blink 2s ease-in-out infinite;
     }
-    .ext-promo-title {
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } }
+
+    .hero h2 {
       font-family: 'Silkscreen', cursive;
-      font-size: 10px; font-weight: 700;
-      color: var(--mint); letter-spacing: 0.5px;
-      margin-bottom: 3px;
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 700; line-height: 1.15;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.6s var(--ease) 0.1s both;
     }
-    .ext-promo-desc {
-      font-size: 11px; color: var(--text-muted);
-      line-height: 1.5;
+    .hero h2 .accent {
+      background: linear-gradient(135deg, var(--mint) 0%, #4ade80 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
-    .ext-promo-link {
+    .hero p {
+      font-size: 15px; line-height: 1.7;
       color: var(--text-secondary);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: rgba(126,203,170,0.3);
-      transition: color 0.2s;
+      max-width: 480px; margin: 0 auto 36px;
+      animation: fadeIn 0.6s var(--ease) 0.2s both;
+      font-weight: 400;
     }
-    .ext-promo-link:hover { color: var(--mint); }
-    .ext-promo-close {
-      position: absolute; top: 8px; right: 8px;
+
+    /* ── CTA Buttons ── */
+    .cta-row {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      animation: fadeIn 0.6s var(--ease) 0.3s both;
+    }
+    .cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 24px; border-radius: 12px;
+      font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.25s var(--ease);
+      letter-spacing: 0.3px;
+    }
+    .cta svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .cta-primary {
+      background: var(--mint); color: var(--bg-deep);
+    }
+    .cta-primary:hover {
+      background: #93d7b8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(126,203,170,0.25);
+    }
+    .cta-secondary {
+      background: var(--bg-raised); color: var(--text-primary);
+      border: 1px solid var(--border-active);
+    }
+    .cta-secondary:hover {
+      border-color: var(--mint);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(126,203,170,0.08);
+    }
+
+    /* ── Terminal demo ── */
+    .terminal {
+      margin: 48px auto 0; max-width: 560px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-active);
+      border-radius: 14px; overflow: hidden;
+      animation: fadeIn 0.6s var(--ease) 0.4s both;
+      box-shadow: 0 0 60px -12px rgba(126,203,170,0.15), 0 20px 50px -20px rgba(0,0,0,0.6);
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px;
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .terminal-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .terminal-dot:nth-child(1) { background: #ff5f57; }
+    .terminal-dot:nth-child(2) { background: #febc2e; }
+    .terminal-dot:nth-child(3) { background: #28c840; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-size: 11px; color: var(--text-muted);
+      margin-right: 36px;
+    }
+    .terminal-body {
+      padding: 20px; font-size: 12.5px; line-height: 1.8;
+      overflow-x: auto; text-align: left;
+    }
+    .terminal-body, .terminal-body * { font-family: 'Space Mono', monospace; }
+    .terminal-body .prompt { color: var(--mint); }
+    .terminal-body .cmd { color: var(--text-primary); }
+    .terminal-body .comment { color: var(--text-muted); font-style: italic; }
+    .terminal-body .output { color: var(--text-secondary); }
+    .terminal-body .cursor {
+      display: inline-block; width: 8px; height: 15px;
+      background: var(--mint); vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    /* ── Section titles ── */
+    .section {
+      padding: 60px 0;
+    }
+    .section-label {
+      font-family: 'Silkscreen', cursive;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--mint); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Silkscreen', cursive;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 700; line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .section-desc {
+      font-size: 14px; line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-active), transparent);
+    }
+
+    /* ── Feature cards ── */
+    .features {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .feature {
+      padding: 20px; border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.3s var(--ease);
+    }
+    .feature:hover {
+      border-color: var(--border-active);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(126,203,170,0.06);
+    }
+    .feature-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--mint-subtle);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      color: var(--mint);
+    }
+    .feature-icon svg { width: 18px; height: 18px; }
+    .feature h3 {
+      font-family: 'Silkscreen', cursive;
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 6px; letter-spacing: 0.5px;
+    }
+    .feature p {
+      font-size: 13px; line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .feature-wide {
+      grid-column: 1 / -1;
+    }
+
+    /* ── Install section ── */
+    .install-cards {
+      display: grid; grid-template-columns: 1fr; gap: 12px;
+    }
+    .install-card {
+      padding: 24px 20px; border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.3s var(--ease);
+    }
+    .install-card:hover {
+      border-color: var(--border-active);
+    }
+    .install-card-chrome {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .install-card-chrome .install-desc { margin-bottom: 0; }
+    .install-card-chrome .install-link { white-space: nowrap; }
+    .install-card h3 {
+      font-family: 'Silkscreen', cursive;
+      font-size: 14px; font-weight: 700;
+      margin-bottom: 4px; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .install-card h3 svg { width: 16px; height: 16px; color: var(--mint); }
+    .install-card .install-desc {
+      font-size: 13px; color: var(--text-secondary);
+      line-height: 1.6; margin-bottom: 16px;
+    }
+    .install-cmd {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 9px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      font-size: 12px; color: var(--mint);
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      position: relative;
+    }
+    .install-cmd:hover { border-color: var(--border-active); }
+    .install-cmd code { flex: 1; font-family: 'Space Mono', monospace; font-size: 12px; }
+    .install-cmd .copy-icon { color: var(--text-muted); flex-shrink: 0; transition: color 0.2s; }
+    .install-cmd:hover .copy-icon { color: var(--mint); }
+    .install-cmd-block code { font-size: 11px; word-break: break-all; }
+    .install-card-wide { grid-column: 1 / -1; }
+    .mcp-tabs {
+      display: flex; gap: 4px; margin-bottom: 14px;
+      background: var(--bg-deep); border-radius: 10px; padding: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+    .mcp-tab {
+      flex: 1; padding: 8px 12px; border-radius: 7px;
       background: none; border: none; cursor: pointer;
-      color: var(--text-muted); padding: 2px;
-      font-size: 14px; line-height: 1;
-      opacity: 0.4; transition: opacity 0.2s;
+      font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: 0.3px;
+      transition: all 0.2s var(--ease);
     }
-    .ext-promo-close:hover { opacity: 1; }
+    .mcp-tab:hover { color: var(--text-secondary); }
+    .mcp-tab.active {
+      background: var(--bg-raised); color: var(--mint);
+      border: 1px solid var(--border-active);
+    }
+    .tab-hint {
+      font-size: 12px; color: var(--text-secondary);
+      line-height: 1.5; margin-bottom: 10px;
+    }
+    .install-cmd .copied-tip {
+      position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+      padding: 3px 10px; border-radius: 6px;
+      background: var(--mint); color: var(--bg-deep);
+      font-size: 10px; font-weight: 700;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .install-cmd .copied-tip.show { opacity: 1; }
+    .install-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px; border-radius: 9px;
+      background: var(--mint); color: var(--bg-deep);
+      font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+      text-decoration: none; letter-spacing: 0.3px;
+      transition: all 0.2s var(--ease);
+    }
+    .install-link:hover {
+      background: #93d7b8;
+      transform: translateY(-1px);
+    }
+    .install-link svg { width: 14px; height: 14px; }
+
+    /* ── Output formats ── */
+    .formats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    }
+    .format-card {
+      padding: 18px; border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+      transition: all 0.3s var(--ease);
+    }
+    .format-card:hover { border-color: var(--border-active); }
+    .format-ext {
+      font-family: 'Silkscreen', cursive;
+      font-size: 20px; font-weight: 700;
+      color: var(--mint); margin-bottom: 6px;
+    }
+    .format-name {
+      font-size: 12px; font-weight: 700; margin-bottom: 3px;
+    }
+    .format-desc {
+      font-size: 11px; color: var(--text-muted); line-height: 1.4;
+    }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex; flex-direction: column; gap: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: ''; position: absolute;
+      left: 35px; top: 32px; bottom: 32px; width: 1px;
+      background: linear-gradient(180deg, var(--mint-dim), var(--border-subtle));
+    }
+    .step {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 18px 20px;
+      position: relative;
+      transition: all 0.3s var(--ease);
+    }
+    .step:hover .step-num {
+      background: var(--mint-dim);
+      box-shadow: 0 0 20px rgba(126,203,170,0.15);
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: var(--mint-subtle); border: 1px solid var(--mint-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Silkscreen', cursive; font-size: 14px; font-weight: 700;
+      color: var(--mint); flex-shrink: 0;
+      position: relative; z-index: 1;
+      transition: all 0.3s var(--ease);
+    }
+    .step-content h3 {
+      font-family: 'Silkscreen', cursive;
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 4px; letter-spacing: 0.5px;
+    }
+    .step-content p {
+      font-size: 13px; line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* ── Marketplace / social proof ── */
+    .proof-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .proof-card {
+      flex: 1; min-width: 200px;
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px; border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      text-decoration: none; color: var(--text-primary);
+      transition: all 0.3s var(--ease);
+    }
+    .proof-card:hover {
+      border-color: var(--border-active);
+      transform: translateY(-2px);
+    }
+    .proof-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--mint-subtle);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--mint);
+    }
+    .proof-icon svg { width: 20px; height: 20px; }
+    .proof-text h4 {
+      font-family: 'Silkscreen', cursive;
+      font-size: 12px; font-weight: 700; margin-bottom: 2px;
+    }
+    .proof-text p {
+      font-size: 11px; color: var(--text-muted); line-height: 1.4;
+    }
 
     /* ── Footer ── */
-    .footer {
-      margin-top: auto; padding-top: 16px;
-      border-top: 1px solid rgba(126,203,170,0.04);
-      display: flex; justify-content: center; align-items: center;
-      gap: 20px;
-      font-size: 10px; color: var(--text-muted);
+    footer {
+      padding: 40px 0;
+      padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
     }
-    .footer a {
+    .footer-brand {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .footer-brand img { width: 24px; height: 24px; border-radius: 6px; }
+    .footer-brand span {
+      font-family: 'Silkscreen', cursive;
+      font-size: 14px; font-weight: 700;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .footer-links a {
       color: var(--text-muted); text-decoration: none;
+      font-size: 11px; letter-spacing: 0.5px;
       transition: color 0.2s;
     }
-    .footer a:hover { color: var(--mint); }
-    .footer .sep { opacity: 0.3; }
+    .footer-links a:hover { color: var(--mint); }
 
-    /* ── Entry Animations ── */
-    .header { animation: fadeUp 0.4s var(--ease) both; }
-    .input-wrap { animation: fadeUp 0.4s var(--ease) 0.05s both; }
-    .mode-tabs { animation: fadeUp 0.4s var(--ease) 0.1s both; }
-    .panel { animation: fadeUp 0.4s var(--ease) 0.15s both; }
-    .footer { animation: fadeUp 0.4s var(--ease) 0.2s both; }
-
-    /* ── Focus states ── */
-    :focus-visible {
-      outline: 2px solid rgba(126,203,170,0.4);
-      outline-offset: 2px;
+    /* ── Tablet ── */
+    @media (max-width: 768px) {
+      .hero { padding: 60px 0 50px; }
+      .terminal { max-width: 100%; }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .hero { padding: 50px 0 40px; }
+      .features { grid-template-columns: 1fr; }
+      .install-card-chrome { flex-direction: column; align-items: flex-start; }
+      .install-card-chrome .install-desc { margin-bottom: 12px; }
+      .formats { grid-template-columns: 1fr; gap: 8px; }
+      .proof-row { flex-direction: column; }
+      .cta { width: 100%; justify-content: center; }
+      .nav-link span { display: none; }
+      .nav-link { padding: 6px 8px; }
+      footer { flex-direction: column; text-align: center; }
+      .terminal-body { padding: 16px; font-size: 11.5px; line-height: 1.7; }
+      .terminal-body .cmd { word-break: break-all; }
+      .mcp-tab { font-size: 10px; padding: 7px 8px; }
+      .install-cmd code { font-size: 11px; }
+      .install-cmd-block code { font-size: 10px; }
+      .section { padding: 48px 0; }
+      .steps::before { left: 31px; }
+      .step { padding: 14px 16px; }
+    }
+    @media (max-width: 380px) {
+      .page { padding: 0 16px; }
+      nav { padding: 16px 0; }
+      .nav-brand h1 { font-size: 18px; }
+      .hero h2 { font-size: 28px; }
+      .mcp-tab { font-size: 9px; padding: 6px 6px; letter-spacing: 0; }
+      .section-title { font-size: 20px; }
+      .proof-card { gap: 10px; padding: 14px; }
+      footer { padding: 32px 0; }
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+    .reveal.visible {
+      opacity: 1; transform: translateY(0);
+    }
+
+    /* ── Selection ── */
+    ::selection {
+      background: rgba(126,203,170,0.25);
+      color: var(--text-primary);
     }
   </style>
 </head>
 <body>
-  <div class="crt" aria-hidden="true"></div>
-  <div class="glow" aria-hidden="true"></div>
+  <div class="crt"></div>
+  <div class="noise"></div>
 
-  <div class="app">
-    <!-- Header -->
-    <header class="header">
-      <div class="logo"><img src="/icon.png" alt="rippr" width="48" height="48"></div>
-      <div class="brand">
-        <h1>rippr</h1>
-        <div class="tag">TRANSCRIPT RIPPER</div>
+  <div class="page">
+    <div class="glow-top"></div>
+
+    <!-- ── Nav ── -->
+    <nav>
+      <a href="/" class="nav-brand">
+        <img src="/icon.png" alt="rippr" width="36" height="36">
+        <h1>RIPPR</h1>
+      </a>
+      <div class="nav-links">
+        <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener" class="nav-link" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="/llms.txt" class="nav-link" aria-label="llms.txt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span>llms.txt</span>
+        </a>
       </div>
-    </header>
+    </nav>
 
-    <!-- URL Input -->
-    <div class="input-wrap">
-      <input type="url" id="url" placeholder="Paste YouTube URL..." autocomplete="off" spellcheck="false" enterkeyhint="go">
-      <button class="icon-btn" id="paste" title="Paste from clipboard">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mode Tabs -->
-    <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="rip">Rip</button>
-      <button class="mode-tab" data-mode="summarize">Summarize</button>
-    </div>
-
-    <!-- ═══ RIP Panel ═══ -->
-    <div class="panel active" id="panel-rip">
-      <span class="section-label">// output_format</span>
-      <div class="presets">
-        <button class="preset active" data-format="txt">
-          <span class="dot"></span>
-          <div class="label"><span class="name">RAG</span><span class="ext">.txt</span></div>
-          <span class="badge">default</span>
-        </button>
-        <button class="preset" data-format="json">
-          <span class="dot"></span>
-          <div class="label"><span class="name">Structured</span><span class="ext">.json</span></div>
-          <span class="badge">default</span>
-        </button>
-        <button class="preset" data-format="md">
-          <span class="dot"></span>
-          <div class="label"><span class="name">Readable</span><span class="ext">.md</span></div>
-          <span class="badge">default</span>
-        </button>
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="hero-badge"><span class="dot"></span> Open source &amp; free forever</div>
+      <h2>YouTube transcripts<br><span class="accent">one tool call</span> away</h2>
+      <p>No API keys. No scraping. No rate limits. Your AI gets YouTube transcripts instantly &mdash; runs locally, never blocked.</p>
+      <div class="cta-row">
+        <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener" class="cta cta-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12" stroke="currentColor" stroke-width="2"/><path d="M3.95 6.06L8.54 14" stroke="currentColor" stroke-width="2"/><path d="M10.88 21.94L15.46 14" stroke="currentColor" stroke-width="2"/></svg>
+          Chrome Extension
+        </a>
+        <a href="#install" class="cta cta-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          MCP Server
+        </a>
       </div>
 
-      <button class="action-btn-main" id="rip-btn" disabled>
-        <span class="btn-text">Paste a URL to start</span>
-        <span class="spinner" aria-hidden="true"></span>
-      </button>
-    </div>
+      <!-- Terminal demo -->
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+          <span class="terminal-dot"></span>
+          <span class="terminal-title">Terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="comment"># One command to install</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">claude mcp add -s user rippr -- npx rippr-mcp</span></div>
+          <div><span class="output">Added rippr to MCP servers</span></div>
+          <div style="margin-top:12px"><span class="comment"># Then just ask Claude</span></div>
+          <div><span class="prompt">&gt; </span><span class="cmd">Get the transcript for https://youtu.be/dQw4w9WgXcQ</span></div>
+          <div style="margin-top:6px"><span class="output">Title: Rick Astley - Never Gonna Give You Up</span></div>
+          <div><span class="output">Channel: Rick Astley</span></div>
+          <div><span class="output">Segments: 61 &bull; Language: en</span></div>
+          <div><span class="output">&#9608; We're no strangers to love, you know the rules...</span><span class="cursor"></span></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- ═══ SUMMARIZE Panel ═══ -->
-    <div class="panel" id="panel-summarize">
-      <button class="action-btn-main" id="sum-btn" disabled>
-        <span class="btn-text">Paste a URL to start</span>
-        <span class="spinner" aria-hidden="true"></span>
-      </button>
-    </div>
+    <div class="divider"></div>
 
-    <!-- Status -->
-    <div class="status" id="status" aria-live="polite"></div>
+    <!-- ── Features ── -->
+    <section class="section reveal">
+      <div class="section-label">// features</div>
+      <h2 class="section-title">Why rippr</h2>
+      <p class="section-desc">No API keys. No rate limits. No sign-up. Just transcripts, extracted from your own machine.</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Instant</h3>
+          <p>Transcripts in seconds. No queues, no waiting, no quotas.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <h3>Your IP</h3>
+          <p>Runs locally. No shared servers, no datacenter blocks.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>3 Formats</h3>
+          <p>RAG-optimized text, structured JSON, or readable Markdown.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>MCP Native</h3>
+          <p>Works with Claude, Cursor, Windsurf, and any MCP client.</p>
+        </div>
+        <div class="feature feature-wide">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Open Source</h3>
+          <p>MIT licensed. Inspect the code, contribute, or fork it. No hidden trackers, no telemetry, no data collection.</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- How It Works (empty state) -->
-    <div class="how-it-works" id="how-it-works">
-      <span class="how-label">// how_it_works</span>
+    <div class="divider"></div>
+
+    <!-- ── Output Formats ── -->
+    <section class="section reveal">
+      <div class="section-label">// output</div>
+      <h2 class="section-title">Pick your format</h2>
+      <p class="section-desc">Optimized for different AI workflows.</p>
+      <div class="formats">
+        <div class="format-card">
+          <div class="format-ext">.txt</div>
+          <div class="format-name">RAG</div>
+          <div class="format-desc">Continuous text for embedding &amp; chunking</div>
+        </div>
+        <div class="format-card">
+          <div class="format-ext">.json</div>
+          <div class="format-name">Structured</div>
+          <div class="format-desc">Timestamped segments with metadata</div>
+        </div>
+        <div class="format-card">
+          <div class="format-ext">.md</div>
+          <div class="format-name">Readable</div>
+          <div class="format-desc">Markdown with headers &amp; formatting</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── Install ── -->
+    <section class="section reveal" id="install">
+      <div class="section-label">// install</div>
+      <h2 class="section-title">Get started</h2>
+      <p class="section-desc">Two ways to rip. Both run locally on your machine &mdash; no server, no rate limits.</p>
+      <div class="install-cards">
+        <div class="install-card install-card-chrome">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12" stroke="currentColor" stroke-width="2"/><path d="M3.95 6.06L8.54 14" stroke="currentColor" stroke-width="2"/><path d="M10.88 21.94L15.46 14" stroke="currentColor" stroke-width="2"/></svg>
+            Chrome Extension
+          </h3>
+          <p class="install-desc">One-click transcripts from any YouTube page. Adds a button right on the player.</p>
+          <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener" class="install-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Install from Chrome Web Store
+          </a>
+        </div>
+        <div class="install-card install-card-wide">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            MCP Server
+          </h3>
+          <p class="install-desc">For AI agents. Pick your client:</p>
+          <div class="mcp-tabs">
+            <button class="mcp-tab active" onclick="switchTab(this, 'claude-desktop')">Claude Desktop</button>
+            <button class="mcp-tab" onclick="switchTab(this, 'cursor')">Cursor</button>
+            <button class="mcp-tab" onclick="switchTab(this, 'claude-code')">Claude Code</button>
+          </div>
+          <div class="mcp-tab-content" id="tab-claude-desktop">
+            <p class="tab-hint">Add to <strong style="color:var(--text-primary)">claude_desktop_config.json</strong>:</p>
+            <div class="install-cmd install-cmd-block" onclick="copyCmd(this)">
+              <code>{ "mcpServers": { "rippr": { "command": "npx", "args": ["rippr-mcp"] } } }</code>
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <span class="copied-tip">Copied!</span>
+            </div>
+            <p class="tab-hint" style="margin-top:8px">Restart Claude Desktop after saving.</p>
+          </div>
+          <div class="mcp-tab-content" id="tab-cursor" style="display:none">
+            <p class="tab-hint">Go to <strong style="color:var(--text-primary)">Settings &rarr; MCP Servers &rarr; Add Server</strong>, then paste:</p>
+            <div class="install-cmd install-cmd-block" onclick="copyCmd(this)">
+              <code>{ "command": "npx", "args": ["rippr-mcp"] }</code>
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <span class="copied-tip">Copied!</span>
+            </div>
+          </div>
+          <div class="mcp-tab-content" id="tab-claude-code" style="display:none">
+            <p class="tab-hint">Run this in your terminal:</p>
+            <div class="install-cmd" onclick="copyCmd(this)">
+              <code>claude mcp add -s user rippr -- npx rippr-mcp</code>
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              <span class="copied-tip">Copied!</span>
+            </div>
+            <p class="tab-hint" style="margin-top:8px">That's it. Claude Code can now rip transcripts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── How it works ── -->
+    <section class="section reveal">
+      <div class="section-label">// how it works</div>
+      <h2 class="section-title">Three steps</h2>
+      <p class="section-desc">Both the Chrome extension and MCP server run locally &mdash; transcripts are extracted from your own IP, never a shared server.</p>
       <div class="steps">
         <div class="step">
-          <span class="step-num">1</span>
-          <span class="step-text"><strong>Paste</strong> a YouTube URL</span>
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Install</h3>
+            <p>Add the Chrome extension or drop <code style="color:var(--mint);font-size:11px">npx rippr-mcp</code> into your MCP config.</p>
+          </div>
         </div>
         <div class="step">
-          <span class="step-num">2</span>
-          <span class="step-text"><strong>Pick</strong> Rip (download transcript) or Summarize (AI summary)</span>
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Rip</h3>
+            <p>Click the rippr button on YouTube, or ask your AI agent to grab a transcript.</p>
+          </div>
         </div>
         <div class="step">
-          <span class="step-num">3</span>
-          <span class="step-text"><strong>Get</strong> clean output for RAG, notes, or research</span>
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Use</h3>
+            <p>Get timestamped text in .txt, .json, or .md &mdash; ready for RAG, summarization, or analysis.</p>
+          </div>
         </div>
       </div>
-      <div class="perks">
-        <span>Free</span><span class="dot">&middot;</span>
-        <span>No signup</span><span class="dot">&middot;</span>
-        <span>No ads</span><span class="dot">&middot;</span>
-        <span>Mobile-friendly</span>
-      </div>
-    </div>
+    </section>
 
-    <!-- Extension Promo -->
-    <div class="ext-promo" id="ext-promo">
-      <div class="ext-promo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);opacity:0.4"/>
-          <path d="M8 12l3 3 5-6" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="ext-promo-body">
-        <div class="ext-promo-title">Now on Chrome Web Store</div>
-        <div class="ext-promo-desc">Rip transcripts directly from YouTube with the browser extension. <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg?hl=en-US&utm_source=ext_sidebar" class="ext-promo-link" target="_blank" rel="noopener">Install rippr &rarr;</a></div>
-      </div>
-      <button class="ext-promo-close" id="ext-promo-close" title="Dismiss" aria-label="Dismiss">&times;</button>
-    </div>
+    <div class="divider"></div>
 
-    <!-- Summary Results -->
-    <div class="results" id="results">
-      <div class="result-header" id="result-header"></div>
-      <div class="result-section" id="summary-section">
-        <h2>Summary</h2>
-        <div class="content" id="summary-content"></div>
+    <!-- ── Ecosystem ── -->
+    <section class="section reveal">
+      <div class="section-label">// ecosystem</div>
+      <h2 class="section-title">Available on</h2>
+      <div class="proof-row">
+        <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener" class="proof-card">
+          <div class="proof-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/></svg>
+          </div>
+          <div class="proof-text">
+            <h4>Chrome Web Store</h4>
+            <p>Browser extension</p>
+          </div>
+        </a>
+        <a href="https://www.npmjs.com/package/rippr-mcp" target="_blank" rel="noopener" class="proof-card">
+          <div class="proof-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z"/></svg>
+          </div>
+          <div class="proof-text">
+            <h4>npm</h4>
+            <p>rippr-mcp</p>
+          </div>
+        </a>
+        <a href="https://glama.ai/mcp/servers/mrslbt/rippr" target="_blank" rel="noopener" class="proof-card">
+          <div class="proof-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="proof-text">
+            <h4>Glama</h4>
+            <p>MCP Registry</p>
+          </div>
+        </a>
       </div>
-      <div class="result-section" id="points-section">
-        <h2>Key Points</h2>
-        <div class="content" id="points-content"></div>
-      </div>
-      <div class="result-section" id="takeaways-section">
-        <h2>Takeaways</h2>
-        <div class="content" id="takeaways-content"></div>
-      </div>
-      <div class="bottom-actions">
-        <button class="btn-sm" id="copy-btn">Copy</button>
-        <button class="btn-sm" id="share-btn">Share</button>
-        <button class="btn-sm" id="new-btn">New</button>
-      </div>
-    </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <span>v1.0</span>
-      <span class="sep">/</span>
-      <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">github</a>
-      <span class="sep">/</span>
-      <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener">chrome extension</a>
+    <div class="divider"></div>
+
+    <!-- ── Footer ── -->
+    <footer>
+      <div class="footer-brand">
+        <img src="/icon.png" alt="rippr" width="24" height="24">
+        <span>RIPPR</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener">GitHub</a>
+        <a href="/llms.txt">llms.txt</a>
+        <a href="https://github.com/mrslbt" target="_blank" rel="noopener">Built by @mrslbt</a>
+      </div>
     </footer>
   </div>
 
   <script>
-    const $ = (id) => document.getElementById(id);
-    const urlInput = $("url");
-    const ripBtn = $("rip-btn");
-    const sumBtn = $("sum-btn");
-    const statusEl = $("status");
-    const resultsEl = $("results");
-    const howEl = $("how-it-works");
-
-    let currentMode = "rip";
-    let selectedFormat = "txt";
-    let lastResult = null;
-
-    // ── URL validation ──
-    function isYT(str) {
-      return str && /(?:youtube\.com\/(?:watch|embed|v|shorts)|youtu\.be\/|^[a-zA-Z0-9_-]{11}$)/.test(str.trim());
+    // Copy command
+    function copyCmd(el) {
+      const code = el.querySelector("code").textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const tip = el.querySelector(".copied-tip");
+        tip.classList.add("show");
+        setTimeout(() => tip.classList.remove("show"), 1500);
+      }).catch(() => {});
     }
 
-    function updateButtons() {
-      const valid = isYT(urlInput.value);
-      ripBtn.disabled = !valid;
-      sumBtn.disabled = !valid;
-      ripBtn.querySelector(".btn-text").textContent = valid ? "Rip Transcript" : "Paste a URL to start";
-      sumBtn.querySelector(".btn-text").textContent = valid ? "Summarize" : "Paste a URL to start";
+    // Tab switching
+    function switchTab(btn, id) {
+      btn.closest('.install-card').querySelectorAll('.mcp-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      btn.closest('.install-card').querySelectorAll('.mcp-tab-content').forEach(c => c.style.display = 'none');
+      document.getElementById('tab-' + id).style.display = 'block';
     }
 
-    urlInput.addEventListener("input", updateButtons);
-
-    // ── Paste button ──
-    $("paste").addEventListener("click", async () => {
-      try {
-        const text = await navigator.clipboard.readText();
-        urlInput.value = text;
-        updateButtons();
-        if (isYT(text)) {
-          if (currentMode === "rip") ripBtn.focus();
-          else sumBtn.focus();
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
         }
-      } catch {}
-    });
-
-    // ── Enter key ──
-    urlInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        if (currentMode === "rip" && !ripBtn.disabled) ripBtn.click();
-        else if (currentMode === "summarize" && !sumBtn.disabled) sumBtn.click();
-      }
-    });
-
-    // ── Mode tabs ──
-    document.querySelectorAll(".mode-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        currentMode = tab.dataset.mode;
-        document.querySelectorAll(".mode-tab").forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
-        $("panel-" + currentMode).classList.add("active");
-        resultsEl.classList.remove("visible");
-        statusEl.textContent = "";
-        statusEl.className = "status";
       });
-    });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 
-    // ── Format presets ──
-    document.querySelectorAll(".preset").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".preset").forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        selectedFormat = btn.dataset.format;
-      });
-    });
-
-    // ── RIP action ──
-    ripBtn.addEventListener("click", async () => {
-      const url = urlInput.value.trim();
-      if (!url) return;
-
-      ripBtn.classList.add("loading");
-      ripBtn.disabled = true;
-      statusEl.textContent = "Extracting transcript...";
-      statusEl.className = "status";
-      resultsEl.classList.remove("visible");
-      howEl.classList.add("hidden");
-
-      try {
-        const resp = await fetch("/api/rip", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || "Something went wrong");
-
-        const output = buildOutput(data, selectedFormat);
-        const ext = selectedFormat;
-        const filename = sanitize(data.title) + "." + ext;
-
-        downloadFile(output, filename);
-
-        statusEl.textContent = `Downloaded ${filename}`;
-        statusEl.className = "status";
-        ripBtn.classList.add("success");
-        ripBtn.querySelector(".btn-text").textContent = "Downloaded!";
-        setTimeout(() => {
-          ripBtn.classList.remove("success");
-          updateButtons();
-        }, 2000);
-      } catch (e) {
-        statusEl.textContent = e.message;
-        statusEl.className = "status error";
-      } finally {
-        ripBtn.classList.remove("loading");
-        if (!ripBtn.classList.contains("success")) updateButtons();
-      }
-    });
-
-    // ── SUMMARIZE action ──
-    sumBtn.addEventListener("click", async () => {
-      const url = urlInput.value.trim();
-      if (!url) return;
-
-      sumBtn.classList.add("loading");
-      sumBtn.disabled = true;
-      statusEl.textContent = "Summarizing...";
-      statusEl.className = "status";
-      resultsEl.classList.remove("visible");
-      howEl.classList.add("hidden");
-
-      try {
-        const resp = await fetch("/api/summarize", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || "Something went wrong");
-
-        lastResult = data;
-        renderSummary(data);
-        statusEl.textContent = "";
-      } catch (e) {
-        statusEl.textContent = e.message;
-        statusEl.className = "status error";
-      } finally {
-        sumBtn.classList.remove("loading");
-        updateButtons();
-      }
-    });
-
-    // ── Build output (mirrors extension shared.js) ──
-    function buildOutput(data, format) {
-      const { title, channel, language, videoUrl, segments } = data;
-
-      if (format === "json") {
-        return JSON.stringify({
-          title, channel, url: videoUrl, language,
-          segments: segments.map((s) => ({ start: s.start, duration: s.duration, text: s.text })),
-          fullText: segments.map((s) => s.text).join(" "),
-        }, null, 2);
-      }
-
-      const lines = [];
-      if (format === "md") {
-        lines.push("# " + title, "");
-        lines.push("**Channel:** " + channel);
-        lines.push("**URL:** " + videoUrl);
-        lines.push("**Language:** " + language, "", "---", "");
-      } else {
-        lines.push("Title: " + title);
-        lines.push("Channel: " + channel);
-        lines.push("URL: " + videoUrl);
-        lines.push("Language: " + language, "", "---", "");
-      }
-
-      for (const seg of segments) lines.push(seg.text);
-
-      let output = lines.join("\n");
-
-      // RAG: join body into single block
-      if (format === "txt") {
-        const parts = output.split("---\n\n");
-        if (parts.length === 2) {
-          const body = parts[1].split("\n").filter((l) => l.trim());
-          output = parts[0] + "---\n\n" + body.join(" ");
-        }
-      }
-
-      return output;
-    }
-
-    function sanitize(name) {
-      return name.replace(/[<>:"/\\|?*]+/g, "").trim().substring(0, 200);
-    }
-
-    function downloadFile(content, filename) {
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    }
-
-    // ── Render summary ──
-    function renderSummary(data) {
-      $("result-header").innerHTML =
-        '<div class="result-title">' + esc(data.title) + '</div>' +
-        '<div class="result-channel">' + esc(data.channel) + '</div>' +
-        (data.isAuto ? '<span class="result-badge">auto-generated captions</span>' : "");
-
-      const sections = parseSections(data.content || "");
-      $("summary-content").innerHTML = sections.summary || "<p>No summary available.</p>";
-      $("points-content").innerHTML = sections.keyPoints || "<p>No key points found.</p>";
-
-      if (sections.takeaways) {
-        $("takeaways-section").style.display = "";
-        $("takeaways-content").innerHTML = sections.takeaways;
-      } else {
-        $("takeaways-section").style.display = "none";
-      }
-
-      resultsEl.classList.add("visible");
-    }
-
-    function parseSections(md) {
-      const result = { summary: "", keyPoints: "", takeaways: "" };
-      const parts = md.split(/^##\s+/m).filter(Boolean);
-      for (const part of parts) {
-        const lines = part.trim().split("\n");
-        const h = lines[0].toLowerCase().trim();
-        const body = lines.slice(1).join("\n").trim();
-        if (h.includes("summary")) result.summary = mdToHtml(body);
-        else if (h.includes("key") || h.includes("point")) result.keyPoints = mdToHtml(body);
-        else if (h.includes("takeaway") || h.includes("action")) result.takeaways = mdToHtml(body);
-      }
-      if (!result.summary && !result.keyPoints) result.summary = mdToHtml(md);
-      return result;
-    }
-
-    function mdToHtml(text) {
-      if (!text) return "";
-      const lines = text.split("\n").filter((l) => l.trim());
-      const bullets = [], paragraphs = [];
-      for (const line of lines) {
-        const t = line.trim();
-        if (t.startsWith("- ") || t.startsWith("* ") || /^\d+\.\s/.test(t))
-          bullets.push(t.replace(/^[-*]\s+|^\d+\.\s+/, ""));
-        else paragraphs.push(t);
-      }
-      let html = "";
-      if (paragraphs.length) html += paragraphs.map((p) => "<p>" + esc(p) + "</p>").join("");
-      if (bullets.length) html += "<ul>" + bullets.map((b) => "<li>" + esc(b) + "</li>").join("") + "</ul>";
-      return html || "<p>" + esc(text) + "</p>";
-    }
-
-    function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
-
-    // ── Bottom actions ──
-    $("copy-btn").addEventListener("click", async () => {
-      if (!lastResult) return;
-      try {
-        await navigator.clipboard.writeText(lastResult.content);
-        $("copy-btn").textContent = "Copied!";
-        setTimeout(() => ($("copy-btn").textContent = "Copy"), 2000);
-      } catch {}
-    });
-
-    $("share-btn").addEventListener("click", async () => {
-      if (!lastResult) return;
-      const text = lastResult.title + "\n\n" + lastResult.content;
-      if (navigator.share) {
-        try { await navigator.share({ title: "rippr: " + lastResult.title, text }); } catch {}
-      } else {
-        await navigator.clipboard.writeText(text);
-        $("share-btn").textContent = "Copied!";
-        setTimeout(() => ($("share-btn").textContent = "Share"), 2000);
-      }
-    });
-
-    // ── Extension promo dismiss ──
-    if (localStorage.getItem("ext-promo-dismissed")) {
-      $("ext-promo").classList.add("hidden");
-    }
-    $("ext-promo-close").addEventListener("click", () => {
-      $("ext-promo").classList.add("hidden");
-      localStorage.setItem("ext-promo-dismissed", "1");
-    });
-
-    $("new-btn").addEventListener("click", () => {
-      urlInput.value = "";
-      resultsEl.classList.remove("visible");
-      howEl.classList.remove("hidden");
-      lastResult = null;
-      statusEl.textContent = "";
-      statusEl.className = "status";
-      updateButtons();
-      urlInput.focus();
-    });
+    document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
