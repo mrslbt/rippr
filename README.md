@@ -5,78 +5,72 @@
 <h1 align="center">rippr</h1>
 
 <p align="center">
-  <strong>YouTube transcript ripper. Built for RAG and LLM workflows.</strong>
+  <strong>YouTube transcript ripper for humans and AI agents.</strong>
 </p>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/rippr-mcp"><img src="https://img.shields.io/npm/v/rippr-mcp?color=green&label=MCP%20Server" alt="npm" /></a>
   <img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3" />
-  <img src="https://img.shields.io/badge/version-2.0.0-green" alt="Version 2.0.0" />
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT License" />
 </p>
 
 <p align="center">
-  <a href="https://rippr.bymarsel.me/"><strong>Website</strong></a> · <a href="https://chromewebstore.google.com/detail/rippr"><strong>Chrome Web Store</strong></a>
+  <a href="https://rippr.me"><strong>Website</strong></a> · <a href="https://chromewebstore.google.com/detail/rippr"><strong>Chrome Web Store</strong></a> · <a href="https://www.npmjs.com/package/rippr-mcp"><strong>MCP Server (npm)</strong></a>
 </p>
 
 ---
 
-## What it does
+## Three ways to use rippr
 
-rippr extracts transcripts from any YouTube video and saves them as clean, structured files. One click on the video page, or paste a URL into the popup.
+### 🌐 Website — [rippr.me](https://rippr.me)
+Paste a YouTube URL, get the transcript. Also summarizes videos with AI.
 
-**Output formats:**
-- **RAG (.txt)** - single continuous text block, optimized for chunking and embedding
-- **Structured (.json)** - timestamped segments with metadata
-- **Readable (.md)** - markdown with headers and formatting
+### 🧩 Chrome Extension — [Chrome Web Store](https://chromewebstore.google.com/detail/rippr)
+One-click transcript extraction directly on any YouTube page. Multiple output formats (RAG, JSON, Markdown).
 
-## Features
+### 🤖 MCP Server — [npm](https://www.npmjs.com/package/rippr-mcp)
+Connect rippr to Claude, Cursor, or any MCP-compatible AI agent.
 
-- In-page button that appears directly on YouTube watch pages
-- Popup interface — paste any YouTube URL from anywhere
-- Multi-language support with auto-detection
-- Auto-generated caption indicator
-- Timestamp toggle
-- Multiple fallback strategies for reliable extraction
+```bash
+npx rippr-mcp
+```
 
-## Install
+Add to Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json`):
 
-### From source (developer)
+```json
+{
+  "mcpServers": {
+    "rippr": {
+      "command": "npx",
+      "args": ["rippr-mcp"]
+    }
+  }
+}
+```
 
-1. Clone this repo
-2. Open `chrome://extensions` in Chrome
-3. Enable **Developer mode** (top right)
-4. Click **Load unpacked**
-5. Select the `youtubetotext` folder
+Then ask: *"Get the transcript of this YouTube video: [url]"*
+
+---
+
+## Output formats
+
+- **RAG (.txt)** — single continuous text block, optimized for chunking and embedding
+- **Structured (.json)** — timestamped segments with metadata
+- **Readable (.md)** — markdown with headers and formatting
 
 ## How it works
 
-rippr uses a multi-strategy approach to extract transcripts:
+Multi-strategy extraction for maximum reliability:
 
-1. **Innertube API** - YouTube's internal player API (primary method)
-2. **HTML scraping** - parses `ytInitialPlayerResponse` from the page source
-3. **Transcript panel** - opens YouTube's built-in transcript panel as a last resort
+1. **Innertube API** — YouTube's internal player API (Android client)
+2. **HTML scraping** — parses `ytInitialPlayerResponse` from page source
+3. **Transcript panel** — opens YouTube's built-in transcript panel as last resort
 
-Caption XML is parsed in multiple formats (srv3, timedtext, JSON3) for maximum compatibility.
-
-## Architecture
-
-```
-youtubetotext/
-  manifest.json      Manifest V3 config
-  shared.js          Shared utilities (parsing, formatting, download)
-  background.js      Service worker — Innertube API + HTML scraping
-  content.js         In-page button UI + transcript extraction
-  content.css        Styles for the YouTube page integration
-  popup.html         Extension popup interface
-  popup.js           Popup logic
-  popup.css          Popup styles
-  rules.json         Declarative net request rules
-  icons/             Extension icons (16, 48, 128)
-```
+Caption XML parsed in multiple formats (srv3, timedtext, JSON3). Retry with exponential backoff on transient failures.
 
 ## Privacy
 
-rippr runs entirely in your browser. No data is sent to any external server. Transcripts are downloaded directly to your machine. The extension only communicates with YouTube's own APIs to fetch caption data.
+Runs entirely on your machine. No data sent to external servers. No accounts, no tracking. Only communicates with YouTube's own APIs.
 
 ## License
 
