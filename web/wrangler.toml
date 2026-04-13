@@ -2,6 +2,11 @@ name = "rippr-web"
 main = "src/worker.js"
 compatibility_date = "2024-09-23"
 
+routes = [
+  { pattern = "rippr.me/*", zone_name = "rippr.me" },
+  { pattern = "www.rippr.me/*", zone_name = "rippr.me" },
+]
+
 [ai]
 binding = "AI"
 
