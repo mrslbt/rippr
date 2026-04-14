@@ -1,5 +1,7 @@
 # rippr-mcp
 
+[![MCP Badge](https://lobehub.com/badge/mcp/mrslbt-rippr)](https://lobehub.com/mcp/mrslbt-rippr)
+
 YouTube transcript extraction for AI agents. MCP server for Claude, Cursor, and any MCP-compatible client.
 
 No API keys. No signup. Runs locally.
