@@ -1,6 +1,7 @@
 # rippr-mcp
 
 [![MCP Badge](https://lobehub.com/badge/mcp/mrslbt-rippr)](https://lobehub.com/mcp/mrslbt-rippr)
+[![rippr MCP server](https://glama.ai/mcp/servers/mrslbt/rippr/badges/score.svg)](https://glama.ai/mcp/servers/mrslbt/rippr)
 
 YouTube transcript extraction for AI agents. MCP server for Claude, Cursor, and any MCP-compatible client.
 
