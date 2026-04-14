@@ -12,7 +12,7 @@ binding = "AI"
 
 [[rules]]
 type = "Text"
-globs = ["**/*.html"]
+globs = ["**/*.html", "**/*.txt"]
 
 [[rules]]
 type = "Data"

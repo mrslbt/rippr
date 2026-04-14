@@ -1,6 +1,7 @@
 import { extractVideoId, fetchTranscript } from "./transcript.js";
 import HTML from "./index.html";
 import ICON from "./icon.png";
+import LLMS from "./llms.txt";
 
 export default {
   async fetch(request, env) {
@@ -20,8 +21,15 @@ export default {
 
     // Serve sitemap
     if (url.pathname === "/sitemap.xml") {
-      return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://rippr.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>`, {
+      return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://rippr.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n  <url><loc>https://rippr.me/llms.txt</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n</urlset>`, {
         headers: { "Content-Type": "application/xml" },
+      });
+    }
+
+    // Serve llms.txt
+    if (url.pathname === "/llms.txt") {
+      return new Response(LLMS, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=86400" },
       });
     }
 

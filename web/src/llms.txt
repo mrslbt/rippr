@@ -1,0 +1,42 @@
+# rippr
+
+> Rip any YouTube transcript. Chrome extension and MCP server.
+
+## What is rippr?
+
+rippr extracts YouTube video transcripts locally from your machine. Available as a Chrome extension for one-click downloads and as an MCP server for AI agents.
+
+No API keys. No sign-up. Free and open source.
+
+## MCP Server
+
+Install: `npx rippr-mcp`
+
+### Tool: rip_transcript
+
+Extract the full transcript from a YouTube video.
+
+Parameters:
+- `url` (string, required): Any YouTube URL format
+- `format` (string, optional): "text" (default) or "segments" (timestamped JSON)
+
+### Prompts
+- `get_transcript`: Get the full transcript of a YouTube video
+- `summarize_video`: Get a transcript and summarize the key points
+- `extract_quotes`: Pull notable quotes, optionally filtered by topic
+- `compare_videos`: Compare the content of two YouTube videos
+- `research_topic`: Extract information about a specific topic from a video
+
+### Resources
+- `rippr://formats`: Available transcript output formats
+
+## Chrome Extension
+
+Install from Chrome Web Store. Adds a rippr button to any YouTube video page for one-click transcript extraction. Supports .txt, .json, and .md export formats.
+
+## Links
+
+- Website: https://rippr.me
+- GitHub: https://github.com/mrslbt/rippr
+- npm: https://www.npmjs.com/package/rippr-mcp
+- Chrome Web Store: https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg
