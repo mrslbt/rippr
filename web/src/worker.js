@@ -1,6 +1,7 @@
 import { extractVideoId, fetchTranscript } from "./transcript.js";
 import HTML from "./index.html";
 import ICON from "./icon.png";
+import OG from "./og.png";
 import LLMS from "./llms.txt";
 
 export default {
@@ -36,6 +37,13 @@ export default {
     // Serve icon
     if (url.pathname === "/icon.png") {
       return new Response(ICON, {
+        headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
+      });
+    }
+
+    // Serve OG image
+    if (url.pathname === "/og.png") {
+      return new Response(OG, {
         headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
       });
     }
