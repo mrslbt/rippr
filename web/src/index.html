@@ -289,12 +289,6 @@
       padding: 20px; border-radius: 14px;
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      transition: all 0.3s var(--ease);
-    }
-    .feature:hover {
-      border-color: var(--border-active);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(126,203,170,0.06);
     }
     .feature-icon {
       width: 36px; height: 36px; border-radius: 10px;
@@ -416,9 +410,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       text-align: center;
-      transition: all 0.3s var(--ease);
     }
-    .format-card:hover { border-color: var(--border-active); }
     .format-ext {
       font-family: 'Silkscreen', cursive;
       font-size: 20px; font-weight: 700;
@@ -486,7 +478,13 @@
     .proof-card:hover {
       border-color: var(--border-active);
       transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(126,203,170,0.06);
     }
+    .proof-card::after {
+      content: '\2197'; font-size: 14px; color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .proof-card:hover::after { color: var(--mint); }
     .proof-icon {
       width: 40px; height: 40px; border-radius: 10px;
       background: var(--mint-subtle);
