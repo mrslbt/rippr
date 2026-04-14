@@ -278,7 +278,7 @@
 
     /* ── Feature cards ── */
     .features {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
     }
     .feature {
       padding: 20px; border-radius: 14px;
@@ -467,7 +467,7 @@
 
     /* ── Marketplace / social proof ── */
     .proof-row {
-      display: flex; gap: 12px; flex-wrap: wrap;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
     }
     .proof-card {
       flex: 1; min-width: 200px;
@@ -532,7 +532,7 @@
     /* ── Mobile ── */
     @media (max-width: 600px) {
       .hero { padding: 50px 0 40px; }
-      .features { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr 1fr; }
       .install-card-chrome { flex-direction: column; align-items: flex-start; }
       .install-card-chrome .install-desc { margin-bottom: 12px; }
       .formats { grid-template-columns: 1fr; gap: 8px; }
@@ -614,7 +614,6 @@
         <a href="https://github.com/mrslbt/rippr" target="_blank" rel="noopener" class="nav-link" aria-label="GitHub">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           <span>GitHub</span>
-          <img src="https://img.shields.io/github/stars/mrslbt/rippr?style=social" alt="GitHub stars" height="14" style="margin-left:2px;">
         </a>
         <a href="/llms.txt" class="nav-link" aria-label="llms.txt">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -626,8 +625,8 @@
     <!-- ── Hero ── -->
     <section class="hero">
       <div class="hero-badge"><span class="dot"></span> Open source &amp; free forever</div>
-      <h2>YouTube transcripts<br><span class="accent">one tool call</span> away</h2>
-      <p>Chrome extension + MCP server. Transcripts extracted locally, never blocked.</p>
+      <h2>Rip any<br><span class="accent">YouTube transcript</span></h2>
+      <p>One click in Chrome. One prompt for your AI agent.</p>
       <div class="cta-row">
         <a href="https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg" target="_blank" rel="noopener" class="cta cta-primary">
           <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/><path d="M21.17 8H12" stroke="currentColor" stroke-width="2"/><path d="M3.95 6.06L8.54 14" stroke="currentColor" stroke-width="2"/><path d="M10.88 21.94L15.46 14" stroke="currentColor" stroke-width="2"/></svg>
@@ -671,6 +670,13 @@
       <div class="features">
         <div class="feature">
           <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+          </div>
+          <h3>One Click</h3>
+          <p>Hit the rippr button on any YouTube page. Transcript downloaded instantly.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
           <h3>Instant</h3>
@@ -698,13 +704,6 @@
           <p>Claude, Cursor, Windsurf, and any MCP-compatible client.</p>
         </div>
         <div class="feature">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 15l-2 5L9 9l11 4-5 2z"/><path d="M2 2l8 8"/></svg>
-          </div>
-          <h3>One Click</h3>
-          <p>Hit the rippr button on any YouTube page. Transcript downloaded instantly.</p>
-        </div>
-        <div class="feature feature-wide">
           <div class="feature-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
