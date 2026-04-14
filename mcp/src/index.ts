@@ -5,6 +5,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { extractVideoId, fetchTranscript } from "./transcript.js";
 
@@ -16,6 +20,8 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      prompts: {},
+      resources: {},
     },
   }
 );
@@ -130,6 +136,163 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true,
     };
   }
+});
+
+// ── Prompts ────────────────────────────────────────
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+  prompts: [
+    {
+      name: "get_transcript",
+      description: "Get the full transcript of a YouTube video",
+      arguments: [
+        { name: "url", description: "YouTube video URL", required: true },
+      ],
+    },
+    {
+      name: "summarize_video",
+      description: "Get a YouTube video transcript and summarize the key points",
+      arguments: [
+        { name: "url", description: "YouTube video URL", required: true },
+      ],
+    },
+    {
+      name: "extract_quotes",
+      description: "Pull notable quotes or key statements from a YouTube video",
+      arguments: [
+        { name: "url", description: "YouTube video URL", required: true },
+        { name: "topic", description: "Topic to focus on (optional)", required: false },
+      ],
+    },
+    {
+      name: "compare_videos",
+      description: "Compare the content of two YouTube videos",
+      arguments: [
+        { name: "url1", description: "First YouTube video URL", required: true },
+        { name: "url2", description: "Second YouTube video URL", required: true },
+      ],
+    },
+    {
+      name: "research_topic",
+      description: "Get a transcript and extract information relevant to a specific topic",
+      arguments: [
+        { name: "url", description: "YouTube video URL", required: true },
+        { name: "topic", description: "Topic to research", required: true },
+      ],
+    },
+  ],
+}));
+
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  const { name, arguments: args } = request.params;
+
+  switch (name) {
+    case "get_transcript":
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: `Get the transcript of this YouTube video: ${args?.url}`,
+            },
+          },
+        ],
+      };
+    case "summarize_video":
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: `Get the transcript of this YouTube video and summarize the key points: ${args?.url}`,
+            },
+          },
+        ],
+      };
+    case "extract_quotes":
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: args?.topic
+                ? `Get the transcript of this YouTube video and pull out notable quotes about "${args.topic}": ${args?.url}`
+                : `Get the transcript of this YouTube video and pull out the most notable quotes: ${args?.url}`,
+            },
+          },
+        ],
+      };
+    case "compare_videos":
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: `Get the transcripts of these two YouTube videos and compare their content:\n1. ${args?.url1}\n2. ${args?.url2}`,
+            },
+          },
+        ],
+      };
+    case "research_topic":
+      return {
+        messages: [
+          {
+            role: "user" as const,
+            content: {
+              type: "text" as const,
+              text: `Get the transcript of this YouTube video and extract all information relevant to "${args?.topic}": ${args?.url}`,
+            },
+          },
+        ],
+      };
+    default:
+      throw new Error(`Unknown prompt: ${name}`);
+  }
+});
+
+// ── Resources ──────────────────────────────────────
+
+server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+  resources: [
+    {
+      uri: "rippr://formats",
+      name: "Output Formats",
+      description: "Available transcript output formats and when to use each one",
+      mimeType: "application/json",
+    },
+  ],
+}));
+
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  if (request.params.uri === "rippr://formats") {
+    return {
+      contents: [
+        {
+          uri: "rippr://formats",
+          mimeType: "application/json",
+          text: JSON.stringify({
+            formats: [
+              {
+                name: "text",
+                description: "Single continuous text block. Best for LLM consumption, RAG pipelines, and summarization.",
+                default: true,
+              },
+              {
+                name: "segments",
+                description: "Timestamped segments with metadata. Best for referencing specific moments, building chapter markers, or detailed analysis.",
+                default: false,
+              },
+            ],
+          }, null, 2),
+        },
+      ],
+    };
+  }
+  throw new Error(`Unknown resource: ${request.params.uri}`);
 });
 
 // ── Start server ────────────────────────────────────

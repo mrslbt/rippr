@@ -2,11 +2,9 @@
 
 YouTube transcript extraction for AI agents. MCP server for Claude, Cursor, and any MCP-compatible client.
 
-[Website](https://rippr.me) · [Chrome Extension](https://chromewebstore.google.com/detail/rippr)
+No API keys. No signup. Runs locally.
 
-## What it does
-
-Extracts transcripts from any YouTube video and returns clean text optimized for LLM consumption. Uses YouTube's InnerTube API with HTML scraping fallback for maximum reliability.
+[Website](https://rippr.me) · [Chrome Extension](https://chromewebstore.google.com/detail/rippr) · [npm](https://www.npmjs.com/package/rippr-mcp)
 
 ## Install
 
@@ -14,7 +12,7 @@ Extracts transcripts from any YouTube video and returns clean text optimized for
 npx rippr-mcp
 ```
 
-## Configure in Claude Desktop
+### Claude Desktop
 
 Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -23,15 +21,17 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "rippr": {
       "command": "npx",
-      "args": ["rippr-mcp"]
+      "args": ["-y", "rippr-mcp"]
     }
   }
 }
 ```
 
-Restart Claude Desktop. Then ask:
+### Claude Code
 
-> "Get me the transcript of this YouTube video: https://www.youtube.com/watch?v=..."
+```bash
+claude mcp add rippr -- npx -y rippr-mcp
+```
 
 ## Tools
 
@@ -39,7 +39,6 @@ Restart Claude Desktop. Then ask:
 
 Extract the full transcript from a YouTube video.
 
-**Input:**
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `url` | string | yes | Any YouTube URL format |
@@ -71,6 +70,31 @@ Full transcript text as a single continuous block...
 }
 ```
 
+## Prompts
+
+| Prompt | Description |
+|--------|-------------|
+| `get_transcript` | Get the full transcript of a YouTube video |
+| `summarize_video` | Get a transcript and summarize the key points |
+| `extract_quotes` | Pull notable quotes or key statements, optionally filtered by topic |
+| `compare_videos` | Compare the content of two YouTube videos |
+| `research_topic` | Extract information relevant to a specific topic from a video |
+
+## Resources
+
+| Resource | URI | Description |
+|----------|-----|-------------|
+| Output Formats | `rippr://formats` | Available transcript output formats and when to use each |
+
+## Example queries
+
+```
+Get the transcript of this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Summarize the key points from this talk: https://youtu.be/abc123
+What does this video say about machine learning? https://www.youtube.com/watch?v=xyz
+Compare these two videos on the same topic: [url1] [url2]
+```
+
 ## How it works
 
 1. Tries YouTube's InnerTube API (Android client) first
@@ -78,7 +102,7 @@ Full transcript text as a single continuous block...
 3. Parses caption XML in multiple formats (srv3, timedtext, JSON3)
 4. Retries with exponential backoff on transient failures
 
-No API keys required. No data sent to external servers. Runs entirely on your machine.
+No API keys required. Runs entirely on your machine.
 
 ## Privacy
 
