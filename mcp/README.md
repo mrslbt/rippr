@@ -92,7 +92,7 @@ Full transcript text as a single continuous block...
 ## Example queries
 
 ```
-Get the transcript of this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Get the transcript of this video: https://www.youtube.com/watch?v=fpETS6q1Hww
 Summarize the key points from this talk: https://youtu.be/abc123
 What does this video say about machine learning? https://www.youtube.com/watch?v=xyz
 Compare these two videos on the same topic: [url1] [url2]
