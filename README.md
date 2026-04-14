@@ -23,7 +23,7 @@
 ## Three ways to use rippr
 
 ### 🌐 Website — [rippr.me](https://rippr.me)
-Paste a YouTube URL, get the transcript. Also summarizes videos with AI.
+Paste a YouTube URL, get the transcript. Clean text, no signup.
 
 ### 🧩 Chrome Extension — [Chrome Web Store](https://chromewebstore.google.com/detail/rippr)
 One-click transcript extraction directly on any YouTube page. Multiple output formats (RAG, JSON, Markdown).
