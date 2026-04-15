@@ -12,6 +12,8 @@
   <a href="https://www.npmjs.com/package/rippr-mcp"><img src="https://img.shields.io/npm/v/rippr-mcp?color=green&label=MCP%20Server" alt="npm" /></a>
   <img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3" />
   <img src="https://img.shields.io/badge/license-MIT-yellow" alt="MIT License" />
+  <a href="https://lobehub.com/mcp/mrslbt-rippr"><img src="https://lobehub.com/badge/mcp/mrslbt-rippr" alt="LobeHub MCP" /></a>
+  <a href="https://glama.ai/mcp/servers/mrslbt/rippr"><img src="https://glama.ai/mcp/servers/mrslbt/rippr/badges/score.svg" alt="Glama MCP" /></a>
 </p>
 
 <p align="center">
