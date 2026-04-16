@@ -74,6 +74,14 @@ Caption XML parsed in multiple formats (srv3, timedtext, JSON3). Retry with expo
 
 Runs entirely on your machine. No data sent to external servers. No accounts, no tracking. Only communicates with YouTube's own APIs.
 
+## More MCPs
+
+| MCP | What it does |
+|-----|-------------|
+| [Japan UX](https://github.com/mrslbt/japan-ux-mcp) | Japanese UX rules for AI — forms, keigo, typography, trust signals |
+| [Rakuten](https://github.com/mrslbt/rakuten-mcp) | Search Rakuten's marketplace, books, and hotels |
+| [Xendit](https://github.com/mrslbt/xendit-mcp) | Xendit payment APIs — invoices, disbursements, balances |
+
 ## License
 
 MIT
