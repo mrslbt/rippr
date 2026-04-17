@@ -31,7 +31,7 @@ Paste a YouTube URL, get the transcript. Clean text, no signup.
 One-click transcript extraction directly on any YouTube page. Multiple output formats (RAG, JSON, Markdown).
 
 ### 🤖 MCP Server — [npm](https://www.npmjs.com/package/rippr-mcp)
-Connect rippr to Claude, Cursor, or any MCP-compatible AI agent.
+Connect rippr to Claude, Cursor, or any MCP-compatible AI agent. Transcripts are saved to `~/rippr/transcripts/` as Markdown — the model gets a resource link and metadata, not a wall of text in context.
 
 ```bash
 npx rippr-mcp
@@ -44,13 +44,13 @@ Add to Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_conf
   "mcpServers": {
     "rippr": {
       "command": "npx",
-      "args": ["rippr-mcp"]
+      "args": ["-y", "rippr-mcp"]
     }
   }
 }
 ```
 
-Then ask: *"Get the transcript of this YouTube video: [url]"*
+Then ask: *"Rip this YouTube video: [url]"* — Claude saves it and tells you the path. Ask for a summary and Claude reads the saved file instead of re-ripping. See [mcp/README.md](mcp/README.md) for the full tool surface.
 
 ---
 
