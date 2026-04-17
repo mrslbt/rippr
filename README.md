@@ -84,6 +84,10 @@ Runs entirely on your machine. No data sent to external servers. No accounts, no
 | [Rakuten](https://github.com/mrslbt/rakuten-mcp) | Search Rakuten's marketplace, books, and hotels |
 | [Xendit](https://github.com/mrslbt/xendit-mcp) | Xendit payment APIs — invoices, disbursements, balances |
 
+## Disclaimer
+
+This is an unofficial MCP server. Not affiliated with or endorsed by YouTube or Google LLC.
+
 ## License
 
 MIT
