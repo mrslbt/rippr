@@ -6,3 +6,21 @@ Transcripts/
 _metadata/
 mcp/.mcpregistry_*
 .mcpregistry_*
+
+# Local repo tooling and scratch assets
+.agents/
+skills/
+skills-lock.json
+
+# Local marketing / recording assets
+MARKETING_PLAN.md
+rippr icon.png
+rippr-video.mp4
+screen-recordings/
+ss/
+store-assets/
+
+# Finder / duplicate files
+* 2.*
+web/package-lock.json
+web/.gitignore 2

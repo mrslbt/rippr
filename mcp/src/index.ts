@@ -73,7 +73,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           save_path: {
             type: "string",
             description:
-              "Optional override for where to save the transcript. Can be an absolute path, a ~/-relative path, a directory (file is named automatically), or a full file path. Default: ~/rippr/transcripts/<slug>_<videoId>.<ext>",
+              "Optional override for where to save the transcript. Can be an absolute path, a ~/-relative path, a directory (file is named automatically), or a full file path. When you save outside the default directory, the returned resource_link still points to the saved file so it can be read later. Default: ~/rippr/transcripts/<slug>_<videoId>.<ext>",
           },
           return_text: {
             type: "boolean",

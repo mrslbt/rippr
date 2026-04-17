@@ -8,6 +8,12 @@ import { fileURLToPath } from "node:url";
 import type { Segment } from "./transcript.js";
 
 export const DEFAULT_SAVE_DIR = path.join(homedir(), "rippr", "transcripts");
+const CUSTOM_PATH_REGISTRY = path.join(DEFAULT_SAVE_DIR, ".saved-paths.json");
+
+function isTranscriptFilename(filename: string): boolean {
+  if (filename.startsWith(".")) return false;
+  return /\.(md|json)$/i.test(filename);
+}
 
 export interface SaveArgs {
   videoId: string;
@@ -54,6 +60,7 @@ export async function saveTranscript(args: SaveArgs): Promise<SaveResult> {
       : renderMarkdown(args);
 
   await fs.writeFile(targetPath, contents, "utf8");
+  await registerSavedPath(targetPath);
 
   return {
     path: targetPath,
@@ -62,31 +69,103 @@ export async function saveTranscript(args: SaveArgs): Promise<SaveResult> {
 }
 
 export async function listSavedTranscripts(): Promise<SaveResult[]> {
+  const savedPaths = new Set<string>();
+
   try {
     const entries = await fs.readdir(DEFAULT_SAVE_DIR);
-    return entries
-      .filter((e) => /\.(md|json)$/i.test(e))
-      .sort()
-      .map((filename) => ({
-        path: path.join(DEFAULT_SAVE_DIR, filename),
-        filename,
-      }));
+    for (const entry of entries) {
+      if (isTranscriptFilename(entry)) {
+        savedPaths.add(path.join(DEFAULT_SAVE_DIR, entry));
+      }
+    }
   } catch {
-    return [];
+    // Ignore missing default directory.
   }
+
+  for (const savedPath of await loadRegisteredPaths()) {
+    if (isTranscriptFilename(path.basename(savedPath))) {
+      savedPaths.add(savedPath);
+    }
+  }
+
+  const results = await Promise.all(
+    [...savedPaths].sort().map(async (savedPath) => {
+      try {
+        const stat = await fs.stat(savedPath);
+        if (!stat.isFile()) return null;
+        return {
+          path: savedPath,
+          filename: path.basename(savedPath),
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return results.filter((entry): entry is SaveResult => entry !== null);
 }
 
 export async function readSavedTranscript(uri: string): Promise<string> {
   const filePath = uri.startsWith("file://") ? fileURLToPath(uri) : uri;
   const resolved = path.resolve(filePath);
-  // Only allow reads within the default save dir to avoid arbitrary-file exposure.
-  const allowedRoot = path.resolve(DEFAULT_SAVE_DIR);
-  if (!resolved.startsWith(allowedRoot + path.sep) && resolved !== allowedRoot) {
-    throw new Error(
-      `Refused to read file outside of ${allowedRoot}: ${resolved}`
-    );
+  if (!(await isAllowedTranscriptPath(resolved))) {
+    throw new Error(`Refused to read unsaved transcript path: ${resolved}`);
   }
   return fs.readFile(resolved, "utf8");
+}
+
+async function isAllowedTranscriptPath(resolvedPath: string): Promise<boolean> {
+  // Block internal metadata files (the custom-path registry, any dotfile).
+  if (path.basename(resolvedPath).startsWith(".")) return false;
+
+  const allowedRoot = path.resolve(DEFAULT_SAVE_DIR);
+  if (
+    resolvedPath === allowedRoot ||
+    resolvedPath.startsWith(allowedRoot + path.sep)
+  ) {
+    return true;
+  }
+
+  const registered = await loadRegisteredPaths();
+  return registered.has(resolvedPath);
+}
+
+async function registerSavedPath(savedPath: string): Promise<void> {
+  const resolvedPath = path.resolve(savedPath);
+  const allowedRoot = path.resolve(DEFAULT_SAVE_DIR);
+  if (
+    resolvedPath === allowedRoot ||
+    resolvedPath.startsWith(allowedRoot + path.sep)
+  ) {
+    return;
+  }
+
+  await fs.mkdir(DEFAULT_SAVE_DIR, { recursive: true });
+  const registered = await loadRegisteredPaths();
+  registered.add(resolvedPath);
+  await fs.writeFile(
+    CUSTOM_PATH_REGISTRY,
+    JSON.stringify([...registered].sort(), null, 2) + "\n",
+    "utf8"
+  );
+}
+
+async function loadRegisteredPaths(): Promise<Set<string>> {
+  try {
+    const raw = await fs.readFile(CUSTOM_PATH_REGISTRY, "utf8");
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return new Set();
+    }
+    return new Set(
+      parsed
+        .filter((entry): entry is string => typeof entry === "string")
+        .map((entry) => path.resolve(entry))
+    );
+  } catch {
+    return new Set();
+  }
 }
 
 function renderMarkdown(args: SaveArgs): string {
