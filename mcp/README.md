@@ -5,11 +5,17 @@
 
 YouTube transcript extraction for AI agents. MCP server for Claude, Cursor, and any MCP-compatible client.
 
-Rips transcripts, **saves them to disk**, and returns a resource link — not a wall of text. Your transcripts persist between sessions and the model's context stays clean.
+Saves each transcript as a file and returns the path. Model context stays clean.
 
 No API keys. No signup. Runs locally.
 
 [Website](https://rippr.me) · [Chrome Extension](https://chromewebstore.google.com/detail/rippr) · [npm](https://www.npmjs.com/package/rippr-mcp)
+
+## Requires a desktop client
+
+rippr runs as a local stdio process. Works with Claude Desktop, Claude Code CLI, Cursor, and any client that can spawn local processes.
+
+It does **not** work with cloud-hosted clients: claude.ai on the web, the Claude mobile app, or Claude Code on phone / web. Those environments can't launch local Node processes, so stdio MCPs like rippr can't be reached from them. Run it from a desktop.
 
 ## Install
 
@@ -43,15 +49,9 @@ claude mcp add rippr -- npx -y rippr-mcp
 When you ask Claude to rip a YouTube video:
 
 1. Claude calls `rip_transcript` with the URL.
-2. rippr saves the transcript to `~/rippr/transcripts/<slug>_<videoId>.md` and returns a `resource_link` + metadata (title, channel, language, duration, word count, saved path, preview). The full transcript text is **not** returned by default.
+2. rippr writes the transcript to `~/rippr/transcripts/<slug>_<videoId>.md` and returns a `resource_link` plus metadata (title, channel, language, duration, word count, saved path, preview). The full transcript text is not returned by default.
 3. Claude tells you where the file was saved.
-4. If you ask follow-ups ("summarize it", "find the part about X"), Claude reads the saved resource instead of re-ripping.
-
-This means:
-
-- Your transcripts persist as real files you can open, grep, share, or feed to anything else.
-- The model's context window doesn't balloon with a 10k-word transcript it might not even use.
-- Multi-video tasks (compare, research across N videos) stay cheap.
+4. Follow-ups ("summarize it", "find the part about X") read the saved resource instead of re-ripping.
 
 ## Tools
 
@@ -64,7 +64,7 @@ Extract and save a YouTube transcript.
 | `url` | string | yes | — | Any YouTube URL format |
 | `format` | string | no | `"text"` | `"text"` → Markdown with frontmatter. `"segments"` → JSON with timestamped segments. |
 | `save_path` | string | no | `~/rippr/transcripts/` | Override save location. Accepts absolute paths, `~/`-relative paths, directories, or full file paths. |
-| `return_text` | boolean | no | `false` | Include the full transcript text inline in the tool response. Use for short clips or when text is explicitly needed. |
+| `return_text` | boolean | no | `false` | Include the full transcript text inline in the tool response. Use for short clips or when the text is needed inline. |
 
 **Response shape:**
 
@@ -127,7 +127,7 @@ Full transcript text as a single continuous block…
 | Output Formats | `rippr://formats` | Format reference (text vs segments) and the default save dir |
 | Saved transcripts | `file://~/rippr/transcripts/*` | Every previously ripped transcript, surfaced as a readable resource |
 
-Saved transcripts are listed dynamically — the client can enumerate them via `resources/list` and read any one via `resources/read` without re-ripping the video.
+Saved transcripts are listed dynamically. The client can enumerate them via `resources/list` and read any one via `resources/read` without re-ripping the video.
 
 ## Example queries
 
@@ -150,7 +150,7 @@ No API keys required. Runs entirely on your machine.
 
 ## Privacy
 
-rippr-mcp runs locally. It communicates with YouTube's own APIs to fetch caption data, and writes transcript files to your filesystem. No telemetry, no analytics, no tracking. Resource reads are restricted to the default save directory.
+Runs locally. Talks to YouTube's own APIs to fetch caption data, and writes transcript files to your filesystem. No telemetry, no analytics, no tracking. Resource reads are restricted to the default save directory.
 
 ## License
 
