@@ -132,13 +132,17 @@ ${truncatedText}`;
 
 async function handleRip(request) {
   try {
-    const { url, format, timestamps } = await request.json();
+    const { url, format = "json", timestamps = false } = await request.json();
     if (!url) return jsonResponse({ error: "Missing url" }, 400);
 
     const videoId = extractVideoId(url);
     if (!videoId) return jsonResponse({ error: "Invalid YouTube URL" }, 400);
 
     const transcript = await fetchTranscript(videoId);
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    const normalizedFormat = ["json", "md", "txt"].includes(format)
+      ? format
+      : "json";
 
     return jsonResponse({
       title: transcript.title,
@@ -146,12 +150,73 @@ async function handleRip(request) {
       language: transcript.language,
       isAuto: transcript.isAuto,
       videoId,
-      videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
-      segments: transcript.segments,
+      videoUrl,
+      format: normalizedFormat,
+      timestamps: Boolean(timestamps),
+      ...(normalizedFormat === "json"
+        ? {
+            segments: transcript.segments,
+            fullText: transcript.segments.map((segment) => segment.text).join(" "),
+          }
+        : {
+            content: formatTranscriptOutput(
+              {
+                title: transcript.title,
+                channel: transcript.channel,
+                language: transcript.language,
+                url: videoUrl,
+                segments: transcript.segments,
+              },
+              normalizedFormat,
+              Boolean(timestamps)
+            ),
+          }),
     });
   } catch (e) {
     return jsonResponse({ error: e.message }, 500);
   }
+}
+
+function formatTranscriptOutput(data, format, includeTimestamps) {
+  const { title, channel, language, url, segments } = data;
+
+  function formatTimestamp(totalSeconds) {
+    const total = Math.max(0, Math.floor(totalSeconds));
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
+
+    if (hours > 0) {
+      return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  if (format === "json") {
+    return JSON.stringify({ title, channel, language, url, segments }, null, 2);
+  }
+
+  const lines = [];
+  if (format === "md") {
+    lines.push(`# ${title}`, "", `**Channel:** ${channel}`, `**URL:** ${url}`, `**Language:** ${language}`, "", "---", "");
+  } else {
+    lines.push(`Title: ${title}`, `Channel: ${channel}`, `URL: ${url}`, `Language: ${language}`, "", "---", "");
+  }
+
+  for (const segment of segments) {
+    if (includeTimestamps) {
+      lines.push(`[${formatTimestamp(segment.start)}] ${segment.text}`);
+    } else {
+      lines.push(segment.text);
+    }
+  }
+
+  if (!includeTimestamps && format === "txt") {
+    const body = segments.map((segment) => segment.text).join(" ");
+    return [...lines.slice(0, 6), body, ""].join("\n");
+  }
+
+  return lines.join("\n");
 }
 
 function jsonResponse(data, status = 200) {
