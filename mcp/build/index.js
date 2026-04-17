@@ -18,7 +18,7 @@ When to override defaults:
 - Pass \`save_path\` to save to a specific directory or file path.
 - Pass \`format: "segments"\` when the user needs timestamped segments (saves JSON instead of Markdown).
 
-Previously ripped transcripts are exposed as resources under \`rippr://transcripts\` / file:// URIs — list them before re-ripping to avoid duplicate work.`;
+Previously ripped transcripts are exposed as \`file://\` resources under the default save directory. Use \`resources/list\` to enumerate them and \`resources/read\` to pull one in, so you can avoid re-ripping a video you already have.`;
 const server = new Server({
     name: "rippr-mcp",
     version: "1.2.0",

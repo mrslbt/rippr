@@ -125,7 +125,7 @@ Full transcript text as a single continuous block…
 | Resource | URI | Description |
 |---|---|---|
 | Output Formats | `rippr://formats` | Format reference (text vs segments) and the default save dir |
-| Saved transcripts | `file://~/rippr/transcripts/*` | Every previously ripped transcript, surfaced as a readable resource |
+| Saved transcripts | `file://` URIs under `~/rippr/transcripts/` | Every previously ripped transcript, surfaced as a readable resource |
 
 Saved transcripts are listed dynamically. The client can enumerate them via `resources/list` and read any one via `resources/read` without re-ripping the video.
 

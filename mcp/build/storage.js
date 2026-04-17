@@ -97,9 +97,11 @@ function renderSegmentsJson(args) {
     }, null, 2);
 }
 function slugify(text) {
+    // Unicode-aware: keeps letters (including CJK, Cyrillic, etc.) and numbers,
+    // replaces whitespace runs with hyphens, strips everything else.
     const slug = text
         .toLowerCase()
-        .replace(/[^\w\s-]/g, "")
+        .replace(/[^\p{L}\p{N}\s-]/gu, "")
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "")

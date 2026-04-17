@@ -5,3 +5,4 @@ node_modules/
 Transcripts/
 _metadata/
 mcp/.mcpregistry_*
+.mcpregistry_*
