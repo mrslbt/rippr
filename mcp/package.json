@@ -1,7 +1,7 @@
 {
   "name": "rippr-mcp",
   "mcpName": "io.github.mrslbt/rippr-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server for ripping YouTube transcripts. Saves each transcript to disk and returns a resource link — persistent artifacts, not ephemeral context. Built for AI agents, RAG pipelines, and LLM workflows.",
   "type": "module",
   "main": "build/index.js",
