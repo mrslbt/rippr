@@ -80,9 +80,17 @@ Runs entirely on your machine. No data sent to external servers. No accounts, no
 
 | MCP | What it does |
 |-----|-------------|
-| [Japan UX](https://github.com/mrslbt/japan-ux-mcp) | Japanese UX rules for AI — forms, keigo, typography, trust signals |
+| [Japan UX](https://github.com/mrslbt/japan-ux-mcp) | Japanese UX rules for AI: forms, keigo, typography, trust signals |
 | [Rakuten](https://github.com/mrslbt/rakuten-mcp) | Search Rakuten's marketplace, books, and hotels |
-| [Xendit](https://github.com/mrslbt/xendit-mcp) | Xendit payment APIs — invoices, disbursements, balances |
+| [Xendit](https://github.com/mrslbt/xendit-mcp) | Xendit payment APIs: invoices, disbursements, balances |
+
+## Disclaimer
+
+Rippr accesses publicly available YouTube transcript data through endpoints that YouTube's own apps use. It is not affiliated with, endorsed by, or sponsored by YouTube or Google LLC. YouTube is a trademark of Google LLC.
+
+Use is subject to YouTube's Terms of Service. Use at your own risk. The author accepts no liability for takedowns, rate limits, account actions, or any other consequences of use.
+
+If YouTube adjusts their internal APIs in ways that break extraction, the tool may stop working without notice. For long-term production use, consider the official [YouTube Data API v3](https://developers.google.com/youtube/v3) with an API key (not currently supported in this package).
 
 ## Disclaimer
 
@@ -90,4 +98,4 @@ This is an unofficial MCP server. Not affiliated with or endorsed by YouTube or 
 
 ## License
 
-MIT
+[MIT](LICENSE)

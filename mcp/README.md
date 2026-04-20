@@ -152,6 +152,14 @@ No API keys required. Runs entirely on your machine.
 
 Runs locally. Talks to YouTube's own APIs to fetch caption data, and writes transcript files to your filesystem. No telemetry, no analytics, no tracking. Resource reads are restricted to the default save directory.
 
+## Disclaimer
+
+Rippr accesses publicly available YouTube transcript data through endpoints that YouTube's own apps use. It is not affiliated with, endorsed by, or sponsored by YouTube or Google LLC. YouTube is a trademark of Google LLC.
+
+Use is subject to YouTube's Terms of Service. Use at your own risk. The author accepts no liability for takedowns, rate limits, account actions, or any other consequences of use.
+
+If YouTube adjusts their internal APIs in ways that break extraction, the tool may stop working without notice. For long-term production use, consider the official [YouTube Data API v3](https://developers.google.com/youtube/v3) with an API key (not currently supported in this package).
+
 ## License
 
-MIT
+[MIT](LICENSE)
