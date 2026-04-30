@@ -75,43 +75,53 @@ try {
       formatsBody.formats.some((f) => f.name === "segments")
   );
 
-  console.log(`${INFO} Calling rip_transcript on ${TEST_VIDEO}`);
-  const result = await client.callTool({
-    name: "rip_transcript",
-    arguments: {
-      url: TEST_VIDEO,
-      save_path: tmpSaveDir,
-    },
-  });
-
-  check("rip_transcript did not error", !result.isError);
-  const resourceLink = result.content.find((c) => c.type === "resource_link");
-  const summaryText = result.content.find((c) => c.type === "text");
-
-  check("response contains a resource_link", !!resourceLink);
-  check("response contains a text summary", !!summaryText?.text);
-
-  if (resourceLink) {
-    const filePath = decodeURIComponent(
-      resourceLink.uri.replace(/^file:\/\//, "")
+  if (process.env.CI && !process.env.RIPPR_TEST_LIVE) {
+    console.log(
+      `${INFO} Skipping live YouTube rip in CI (datacenter IPs are blocked by YouTube). Set RIPPR_TEST_LIVE=1 on a self-hosted runner to enable.`
     );
-    check("saved file is under tmpSaveDir", filePath.startsWith(tmpSaveDir));
+  } else {
+    console.log(`${INFO} Calling rip_transcript on ${TEST_VIDEO}`);
+    const result = await client.callTool({
+      name: "rip_transcript",
+      arguments: {
+        url: TEST_VIDEO,
+        save_path: tmpSaveDir,
+      },
+    });
 
-    let stat;
-    try {
-      stat = statSync(filePath);
-    } catch (e) {
-      check("saved file exists on disk", false, e.message);
+    const summaryText = result.content.find((c) => c.type === "text");
+    if (result.isError) {
+      console.log(`${INFO} rip_transcript error: ${summaryText?.text}`);
     }
-    if (stat) {
-      check("saved file is non-empty", stat.size > 0, `${stat.size} bytes`);
 
-      const body = readFileSync(filePath, "utf-8");
-      check("saved file looks like a transcript", body.length > 100);
-      check(
-        "saved file has YAML frontmatter or JSON shape",
-        body.startsWith("---") || body.trim().startsWith("{") || body.trim().startsWith("[")
+    check("rip_transcript did not error", !result.isError);
+    const resourceLink = result.content.find((c) => c.type === "resource_link");
+
+    check("response contains a resource_link", !!resourceLink);
+    check("response contains a text summary", !!summaryText?.text);
+
+    if (resourceLink) {
+      const filePath = decodeURIComponent(
+        resourceLink.uri.replace(/^file:\/\//, "")
       );
+      check("saved file is under tmpSaveDir", filePath.startsWith(tmpSaveDir));
+
+      let stat;
+      try {
+        stat = statSync(filePath);
+      } catch (e) {
+        check("saved file exists on disk", false, e.message);
+      }
+      if (stat) {
+        check("saved file is non-empty", stat.size > 0, `${stat.size} bytes`);
+
+        const body = readFileSync(filePath, "utf-8");
+        check("saved file looks like a transcript", body.length > 100);
+        check(
+          "saved file has YAML frontmatter or JSON shape",
+          body.startsWith("---") || body.trim().startsWith("{") || body.trim().startsWith("[")
+        );
+      }
     }
   }
 
