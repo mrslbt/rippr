@@ -25,13 +25,19 @@
     "claude",
     "model-context-protocol"
   ],
-  "author": "Marsel Bait",
+  "author": {
+    "name": "Marsel Bait",
+    "url": "https://marselbait.me"
+  },
   "license": "MIT",
+  "homepage": "https://rippr.me",
   "repository": {
     "type": "git",
     "url": "https://github.com/mrslbt/rippr"
   },
-  "homepage": "https://rippr.me",
+  "bugs": {
+    "url": "https://github.com/mrslbt/rippr/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "zod": "^3.24.4"
