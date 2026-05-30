@@ -1,38 +1,99 @@
 # rippr
 
-> Rip any YouTube transcript. Chrome extension and MCP server.
+> YouTube transcript ripper for humans and AI agents. Three surfaces, one job: get clean transcripts where you actually need them.
 
 ## What is rippr?
 
-rippr extracts YouTube video transcripts locally from your machine. Available as a Chrome extension for one-click downloads and as an MCP server for AI agents.
+rippr extracts YouTube video transcripts. It runs locally — no API keys, no sign-up, no cloud, no tracking. Open source under MIT.
 
-No API keys. No sign-up. Free and open source.
+Three ways to use it depending on where you are:
 
-## MCP Server
+- **Website** — paste a URL, get a transcript. https://rippr.me
+- **Chrome Extension** — one-click rip on any YouTube page. Exports as `.txt`, `.json`, or `.md`. https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg
+- **MCP Server** — for AI agents (Claude Desktop, Claude Code, Cursor). Saves transcripts to disk and returns persistent file paths. https://www.npmjs.com/package/rippr-mcp
 
-Install: `npx rippr-mcp`
+## What makes rippr different from other YouTube transcript MCPs
+
+Several other YouTube transcript MCP servers exist. rippr's design choices:
+
+- **Persistent artifacts, not ephemeral context.** By default, `rip_transcript` saves a Markdown file to `~/rippr/transcripts/<slug>_<videoId>.md` and returns a `resource_link` plus metadata. The full transcript text is NOT returned inline. This keeps the model's context lean and gives the user a real file they can reuse, share, or pipe into other tools.
+- **The model re-reads, doesn't re-rip.** Previously saved transcripts are exposed as `file://` resources. An agent that already ripped a video reads it back via the resources API instead of fetching from YouTube again.
+- **Three surfaces, one engine.** Same transcript extraction logic powers the website, Chrome extension, and MCP. Behavior and output are consistent across all three.
+- **No network beyond YouTube.** Calls YouTube's own caption APIs (innertube, timedtext, transcript panel) with multiple fallback strategies. No third-party services, no telemetry, no analytics.
+
+## MCP server
+
+Version: 1.2.1
+
+Install on demand:
+
+```bash
+npx rippr-mcp
+```
+
+### Claude Code
+
+```bash
+claude mcp add -s user rippr -- npx rippr-mcp
+```
+
+### Claude Desktop / Cursor
+
+Edit `claude_desktop_config.json` (Claude Desktop) or `~/.cursor/mcp.json` (Cursor):
+
+```json
+{
+  "mcpServers": {
+    "rippr": {
+      "command": "npx",
+      "args": ["-y", "rippr-mcp"]
+    }
+  }
+}
+```
 
 ### Tool: rip_transcript
 
-Extract the full transcript from a YouTube video.
+Extract a YouTube transcript. Saves to disk by default; returns a `resource_link` and metadata block (title, channel, language, duration, word count, segment count, preview). Does NOT return the full transcript text unless explicitly asked.
 
 Parameters:
-- `url` (string, required): Any YouTube URL format
-- `format` (string, optional): "text" (default) or "segments" (timestamped JSON)
+
+- `url` (string, required) — YouTube URL in any format (`watch?v=`, `youtu.be/`, `embed/`, `shorts/`, or bare 11-char ID).
+- `format` (string, optional) — `"text"` saves Markdown with YAML frontmatter (default; best for RAG, summarization, human reading). `"segments"` saves JSON with timestamped segments (best for chapter markers or precise citations).
+- `save_path` (string, optional) — override save location. Accepts an absolute path, a `~/`-relative path, a directory (filename auto-generated), or a full file path. Default: `~/rippr/transcripts/<slug>_<videoId>.<ext>`.
+- `return_text` (boolean, optional) — set `true` to include the full transcript text inline in the response. Default `false`. Use only for short clips or when the user explicitly asks for the transcript pasted.
 
 ### Prompts
-- `get_transcript`: Get the full transcript of a YouTube video
-- `summarize_video`: Get a transcript and summarize the key points
-- `extract_quotes`: Pull notable quotes, optionally filtered by topic
-- `compare_videos`: Compare the content of two YouTube videos
-- `research_topic`: Extract information about a specific topic from a video
+
+- `get_transcript(url)` — rip a video, surface the saved file path
+- `summarize_video(url)` — rip, read the saved file, summarize key points
+- `extract_quotes(url, topic?)` — rip, pull notable quotes, optionally filtered by topic
+- `compare_videos(url1, url2)` — rip both videos, compare their content
+- `research_topic(url, topic)` — rip, extract information relevant to a specific topic
 
 ### Resources
-- `rippr://formats`: Available transcript output formats
 
-## Chrome Extension
+- `rippr://formats` — JSON describing the output formats (`text`, `segments`) and when to use each
+- `file://...` — every previously-ripped transcript on this machine is exposed as a readable resource. Use `resources/list` to enumerate, `resources/read` to fetch a specific file by URI.
 
-Install from Chrome Web Store. Adds a rippr button to any YouTube video page for one-click transcript extraction. Supports .txt, .json, and .md export formats.
+## Constraints
+
+- **Desktop MCP clients only.** rippr runs as a local stdio process, so it works with Claude Desktop (Mac/Windows), Claude Code CLI, Cursor, Cline, and other clients that can spawn local subprocesses. It does NOT work with claude.ai on the web, the Claude mobile app, or any cloud-hosted MCP client that can't run local processes.
+- **Requires Node.js 18 or newer.**
+- **Requires a public YouTube video with captions available.** Private, members-only, and caption-less videos cannot be ripped.
+
+## What rippr will not do
+
+- No cloud storage. Transcripts stay on the user's machine.
+- No API keys, accounts, or signup.
+- No telemetry, analytics, or phone-home behavior.
+- No transcription of audio-only videos. Uses YouTube's existing captions only.
+- No editing or summarization inside the MCP. Pure extraction and storage; transformation is the LLM's job after reading the file.
+- No full-text-by-default in tool output. The persistent-file pattern is intentional.
+
+## Recognition
+
+Listed on: [Glama](https://glama.ai/mcp/servers/mrslbt/rippr) (quality score: A), [LobeHub](https://lobehub.com/mcp/mrslbt-rippr), [mcp.so](https://mcp.so), [mcpmux](https://mcpmux.com), and the [Official MCP Registry](https://registry.modelcontextprotocol.io).
 
 ## Links
 
@@ -40,3 +101,8 @@ Install from Chrome Web Store. Adds a rippr button to any YouTube video page for
 - GitHub: https://github.com/mrslbt/rippr
 - npm: https://www.npmjs.com/package/rippr-mcp
 - Chrome Web Store: https://chromewebstore.google.com/detail/rippr/epkhdelalogclpoimoeloaicfaehaolg
+- This file: https://rippr.me/llms.txt
+
+## Maintainer
+
+Built by Marsel Bait (https://marselbait.me) — product designer in Tokyo shipping AI-native tooling. rippr is part of a portfolio of MCP servers focused on Japan/SEA region and AI agent infrastructure.
