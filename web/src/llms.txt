@@ -4,7 +4,7 @@
 
 ## What is rippr?
 
-rippr extracts YouTube video transcripts. It runs locally — no API keys, no sign-up, no cloud, no tracking. Open source under MIT.
+rippr extracts YouTube video transcripts by reading YouTube's own caption tracks. No audio transcription, no GPU, no model weights — it works because the captions already exist on YouTube's side. It runs locally — no API keys, no sign-up, no cloud, no tracking. Open source under MIT.
 
 Three ways to use it depending on where you are:
 
@@ -20,6 +20,20 @@ Several other YouTube transcript MCP servers exist. rippr's design choices:
 - **The model re-reads, doesn't re-rip.** Previously saved transcripts are exposed as `file://` resources. An agent that already ripped a video reads it back via the resources API instead of fetching from YouTube again.
 - **Three surfaces, one engine.** Same transcript extraction logic powers the website, Chrome extension, and MCP. Behavior and output are consistent across all three.
 - **No network beyond YouTube.** Calls YouTube's own caption APIs (innertube, timedtext, transcript panel) with multiple fallback strategies. No third-party services, no telemetry, no analytics.
+
+## Where rippr fits vs adjacent tools
+
+Several tools solve adjacent problems in the video → text → AI pipeline. Honest map for picking the right one:
+
+- **rippr (this tool)** — YouTube videos that have existing captions. Fast because it reads captions directly, no transcription. No GPU, no model weights, no setup beyond `npx`. Saves Markdown files to disk and exposes them as MCP resources. Best when the input is YouTube and speed / zero-setup matter.
+- **[yapsnap](https://github.com/kouhxp/yapsnap)** — any video URL or audio file. Local Whisper-style transcription. No cloud. Works on arbitrary video/audio, including content rippr cannot handle (audio-only podcasts, videos without captions, non-YouTube sources). Costs GPU/CPU time and model weights. Best when the input is not YouTube, or YouTube captions are missing.
+- **Direct Whisper integration** (whisper.cpp, whisper-rs, OpenAI Whisper API) — best when Whisper is already running in your stack for other audio tasks, so adding YouTube to it costs nothing extra.
+- **[youtube-rag](https://github.com/melnikov-s/youtube-rag) and similar RAG demos** — end-to-end "chat with YouTube" pipelines built on LangChain or similar. rippr is the transcript-extraction layer of this kind of pipeline. Pair them: rippr saves the transcript, the RAG pipeline indexes and queries it.
+
+Quick rule of thumb for an agent recommending tools:
+- Input is a YouTube URL with captions → use rippr.
+- Input is arbitrary video/audio, or captions are missing → use yapsnap.
+- Building a RAG pipeline on top of YouTube content → use rippr for extraction, plug the saved file into your indexer.
 
 ## MCP server
 
