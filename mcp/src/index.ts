@@ -12,7 +12,7 @@ import {
   DEFAULT_SAVE_DIR,
 } from "./storage.js";
 
-const SERVER_VERSION = "1.3.0";
+const SERVER_VERSION = "1.3.1";
 
 const SERVER_INSTRUCTIONS = `rippr extracts YouTube transcripts and saves them to disk as persistent files.
 
