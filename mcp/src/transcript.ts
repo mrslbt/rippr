@@ -53,23 +53,36 @@ export async function fetchTranscript(videoId: string): Promise<TranscriptResult
   let captionTracks: any[] | undefined;
   let metadata: { title: string; author: string; duration: number } | undefined;
 
+  // What YouTube said about the video on each path, so a refusal is not
+  // misreported as "no captions".
+  const refusals: Playability[] = [];
+  let webPageError: unknown;
+
   // Try InnerTube API first
   try {
     const result = await fetchViaInnerTube(videoId);
     captionTracks = result.captionTracks;
     metadata = result.metadata;
-  } catch {
-    // silent — fall through to HTML scraping
+  } catch (e) {
+    // fall through to HTML scraping, but remember why
+    if (e instanceof PlayabilityError) refusals.push(e.playability);
   }
 
   // Fallback: scrape watch page HTML
   if (!captionTracks || captionTracks.length === 0) {
-    const result = await fetchViaWebPage(videoId);
-    captionTracks = result.captionTracks;
-    metadata = result.metadata;
+    try {
+      const result = await fetchViaWebPage(videoId);
+      captionTracks = result.captionTracks;
+      metadata = result.metadata;
+      if (isRefusal(result.playability)) refusals.push(result.playability);
+    } catch (e) {
+      webPageError = e;
+    }
   }
 
   if (!captionTracks || captionTracks.length === 0) {
+    if (refusals.length > 0) throw new Error(describeRefusal(refusals));
+    if (webPageError) throw webPageError;
     throw new Error(
       "No captions found. This video may not have subtitles enabled."
     );
@@ -85,6 +98,48 @@ export async function fetchTranscript(videoId: string): Promise<TranscriptResult
     isAuto: track.kind === "asr",
     segments,
   };
+}
+
+// ── Playability: what YouTube says about serving the video ──
+interface Playability {
+  status: string;
+  reason: string;
+}
+
+class PlayabilityError extends Error {
+  constructor(public playability: Playability) {
+    super(`YouTube playability ${playability.status}: ${playability.reason}`);
+  }
+}
+
+function readPlayability(player: any): Playability {
+  const ps = player?.playabilityStatus || {};
+  return {
+    status: typeof ps.status === "string" ? ps.status : "UNKNOWN",
+    reason: typeof ps.reason === "string" ? ps.reason : "",
+  };
+}
+
+function isRefusal(p: Playability): boolean {
+  return p.status !== "OK" && p.status !== "UNKNOWN";
+}
+
+function describeRefusal(refusals: Playability[]): string {
+  const botCheck = refusals.find((p) => /not a bot/i.test(p.reason));
+  if (botCheck) {
+    return (
+      `YouTube blocked this request with a bot check ("${botCheck.reason}"). ` +
+      "This is not a missing-captions problem: the video may well have captions, " +
+      "but YouTube refused to serve it to this network right now. " +
+      "Try again later or from a different network."
+    );
+  }
+  const p = refusals[0];
+  return (
+    `YouTube would not serve this video (${p.status}` +
+    (p.reason ? `: "${p.reason}"` : "") +
+    "), so its captions could not be read."
+  );
 }
 
 // ── InnerTube player API (ANDROID client) ───────────
@@ -108,6 +163,8 @@ async function fetchViaInnerTube(videoId: string) {
     data?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
 
   if (!Array.isArray(captionTracks) || captionTracks.length === 0) {
+    const playability = readPlayability(data);
+    if (isRefusal(playability)) throw new PlayabilityError(playability);
     throw new Error("No caption tracks in InnerTube response");
   }
 
@@ -167,6 +224,7 @@ async function fetchViaWebPage(videoId: string) {
 
   return {
     captionTracks,
+    playability: readPlayability(player),
     metadata: {
       title: vd.title || "Unknown",
       author: vd.author || "Unknown",
